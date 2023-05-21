@@ -31,6 +31,9 @@
 						}
 					}).then(response => {
 						console.log(response)
+						if(response.data.privilege == "Super Admin"){
+							window.location.href = '/super-admin/dashboard'
+						}
 						// sessionStorage.setItem('access_token', response.data.access_token)
 						// sessionStorage.setItem('email', email)
 						// sessionStorage.setItem('password', password)
