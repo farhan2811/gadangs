@@ -4,7 +4,7 @@
 	import ApiController from '../../ApiController'
 	import { bind } from 'svelte/internal';
 
-	let progress_state = 4;
+	let progress_state = 1;
 	let jenis_marketing = 'Lead Marketing';
 
 	let provinsi = null
@@ -19,6 +19,7 @@
 
 	let informasiPersonal = {
 		nama_lengkap: "",
+		email: "",
 		nomor_ktp: "",
 		alamat: "",
 		rt: "",
@@ -233,9 +234,15 @@
 							<div class="title-input">Nama Lengkap</div>
 							<input type="text" id="nama-lengkap" placeholder="masukkan nama lengkap disini.." class="input-col" value="{informasiPersonal.nama_lengkap}">
 						</div>
-						<div class="flex flex-direction-col flex-gap-semi-small">
-							<div class="title-input">Nomor KTP</div>
-							<input type="text" id="nomor-ktp" placeholder="1014XXXXXXXXX" class="input-col" value="{informasiPersonal.nomor_ktp}">
+						<div class="flex flex-gap-regular">
+							<div class="flex flex-direction-col flex-gap-semi-small w-50">
+								<div class="title-input">Alamat Email</div>
+								<input type="email" id="email" placeholder="john.doe@gmail.com" class="input-col" value="{informasiPersonal.email}">
+							</div>
+							<div class="flex flex-direction-col flex-gap-semi-small w-50">
+								<div class="title-input">Nomor KTP</div>
+								<input type="text" id="nomor-ktp" placeholder="1014XXXXXXXXX" class="input-col" value="{informasiPersonal.nomor_ktp}">
+							</div>
 						</div>
 						<div class="flex flex-direction-col flex-gap-semi-small">
 							<div class="title-input">Alamat</div>
@@ -261,7 +268,6 @@
 									getPosCode(selectedKel)
 								}}>
 									<option disabled selected value="">Pilih Kecamatan Terlebih Dahulu</option>
-									<option value="asdas">asdasd</option>
 								</select>
 							</div>
 						</div>
@@ -327,6 +333,12 @@
 								informasiPersonal.nama_lengkap = document.getElementById('nama-lengkap').value
 							}else{
 								createAlert("nama-lengkap", "Masukkan Nama Lengkap Anda!")
+							}
+
+							if(document.getElementById('email').value != ""){
+								informasiPersonal.email = document.getElementById('email').value
+							}else{
+								createAlert("email", "Masukkan Alamat Email Anda!")
 							}
 
 							if(document.getElementById('nomor-ktp').value != ""){
