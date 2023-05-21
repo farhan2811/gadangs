@@ -15,6 +15,7 @@
 
 	let stepOne = false
 	let stepTwo = false
+	let stepFour = false
 
 	let informasiPersonal = {
 		nama_lengkap: "",
@@ -182,6 +183,10 @@
 	}
 
 	let createAlert = (inputId, msg) => {
+		if(document.getElementById(`alert-${inputId}`)){
+			document.getElementById(`alert-${inputId}`).remove()
+		}
+
 		let parent = document.getElementById(inputId).parentElement
 		let text = document.createElement('p')
 		text.id = `alert-${inputId}`
@@ -526,19 +531,19 @@
 						</div>
 						<div class="flex flex-direction-col flex-gap-semi-small">
 							<div class="title-input">Foto Copy KTP</div>
-							<input type="file" class="input-col">
+							<input type="file" class="input-col" id="ktp">
 						</div>
 						<div class="flex flex-direction-col flex-gap-semi-small">
 							<div class="title-input">Foto Copy NPWP</div>
-							<input type="file" class="input-col">
+							<input type="file" class="input-col" id="npwp">
 						</div>
 						<div class="flex flex-direction-col flex-gap-semi-small">
 							<div class="title-input">Foto Copy Buku Rekening (Halaman Depan)</div>
-							<input type="file" class="input-col">
+							<input type="file" class="input-col" id="buku-rekening">
 						</div>
 						<div class="flex flex-direction-col flex-gap-semi-small">
 							<div class="title-input">Surat Perjanjian Kerja Marketing</div>
-							<input type="file" class="input-col">
+							<input type="file" class="input-col" id="spk-marketing">
 						</div>
 					</div>
 					<div class="flex flex-direction-col flex-gap-regular w-100">
@@ -556,7 +561,38 @@
 								<span>Kembali</span>
 							</button>
 							<button class="button-login flex flex-center-horizontal flex-center-vertical flex-gap-regular" on:click={() => {
-							// progress_state++
+								if(document.getElementById('ktp').files[0] != undefined){
+									berkas.ktp = document.getElementById('ktp').files[0]
+								}else{
+									createAlert('ktp', 'Mohon Lampirkan KTP')
+								}
+
+								if(document.getElementById('npwp').files[0] != undefined){
+									berkas.npwp = document.getElementById('npwp').files[0]
+								}else{
+									createAlert('npwp', 'Mohon Lampirkan NPWP')
+								}
+
+								if(document.getElementById('buku-rekening').files[0] != undefined){
+									berkas.buku_rekening = document.getElementById('buku-rekening').files[0]
+								}else{
+									createAlert('buku-rekening', 'Mohon Lampirkan Buku Rekening')
+								}
+
+								if(document.getElementById('spk-marketing').files[0] != undefined){
+									berkas.spk_marketing = document.getElementById('spk-marketing').files[0]
+								}else{
+									createAlert('spk-marketing', 'Mohon Lampirkan Surat Perjanjian Kerja Marketing')
+								}
+
+								stepFour = Object.values(berkas).every(x => x !== null)
+								if(stepFour){
+									console.log(berkas)
+								}else{
+									alert("Lengkapi semua form!")
+								}
+
+								// progress_state++
 						}}>
 								<span>Daftar</span>
 								<i class="fa-solid fa-angle-right"></i>
