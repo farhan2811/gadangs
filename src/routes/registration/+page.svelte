@@ -2,8 +2,9 @@
 	import { onMount } from 'svelte';
 	import {fly, scale} from 'svelte/transition'
 	import ApiController from '../../ApiController'
+	import { bind } from 'svelte/internal';
 
-	let progress_state = 1;
+	let progress_state = 4;
 	let jenis_marketing = 'Lead Marketing';
 
 	let provinsi = null
@@ -29,7 +30,21 @@
 	}
 
 	let informasiBank = {
+		bank: "",
+		nomor_rekening: "",
+		cabang_bank: ""
+	}
 
+	let penempatan = {
+		rekrut_sebagai: "",
+		lead_marketing: ""
+	}
+
+	let berkas = {
+		ktp: null,
+		npwp: null,
+		buku_rekening: null,
+		spk_marketing: null
 	}
 
 	let getProvinsi = () => {
@@ -166,6 +181,22 @@
 		}
 	}
 
+	let createAlert = (inputId, msg) => {
+		let parent = document.getElementById(inputId).parentElement
+		let text = document.createElement('p')
+		text.id = `alert-${inputId}`
+		text.textContent = msg
+		text.style.color = "red"
+		text.style.fontSize = "12px"
+		parent.appendChild(text)
+
+		document.getElementById(inputId).addEventListener('change', () => {
+			if(document.getElementById(`alert-${inputId}`)){
+				document.getElementById(`alert-${inputId}`).remove()
+			}
+		})
+	}
+
 	onMount(() => {
 		getProvinsi()
 	})
@@ -217,13 +248,15 @@
 							<div class="flex flex-direction-col flex-gap-semi-small w-60">
 								<div class="title-input">Kelurahan</div>
 								<!-- <input type="text" placeholder="Dago" class="input-col"> -->
-								<select name="kelurahan" id="kelurahan" class="select-col" on:change={() => {
+								<select name="kelurahan" id="kelurahan" class="select-col"
+								on:change={() => {
 									let selectedKel = document.getElementById('kelurahan').value
 									informasiPersonal.kelurahan = selectedKel
 									
 									getPosCode(selectedKel)
 								}}>
 									<option disabled selected value="">Pilih Kecamatan Terlebih Dahulu</option>
+									<option value="asdas">asdasd</option>
 								</select>
 							</div>
 						</div>
@@ -287,28 +320,53 @@
 						<button class="button-login flex flex-center-horizontal flex-center-vertical flex-gap-regular" on:click={() => {
 							if(document.getElementById('nama-lengkap').value != ""){
 								informasiPersonal.nama_lengkap = document.getElementById('nama-lengkap').value
+							}else{
+								createAlert("nama-lengkap", "Masukkan Nama Lengkap Anda!")
 							}
 
 							if(document.getElementById('nomor-ktp').value != ""){
 								informasiPersonal.nomor_ktp = document.getElementById('nomor-ktp').value
+							}else{
+								createAlert("nomor-ktp", "Masukkan Nomor KTP Anda!")
 							}
 
 							if(document.getElementById('alamat').value != ""){
 								informasiPersonal.alamat = document.getElementById('alamat').value
+							}else{
+								createAlert("alamat", "Masukkan Alamat Anda!")
 							}
 
 							if(document.getElementById('rt').value != ""){
 								informasiPersonal.rt = document.getElementById('rt').value
+							}else{
+								createAlert("rt", "Masukkan Nomor RT Anda!")
 							}
 
 							if(document.getElementById('rw').value != ""){
 								informasiPersonal.rw = document.getElementById('rw').value
+							}else{
+								createAlert("rw", "Masukkan Nomor RW Anda!")
+							}
+
+							if(document.getElementById('provinsi').selectedIndex == 0){
+								createAlert("provinsi", "Pilih Provinsi Anda!")
+							}
+
+							if(document.getElementById('kabupaten').selectedIndex == 0){
+								createAlert("kabupaten", "Pilih Kabupaten Anda!")
+							}
+
+							if(document.getElementById('kecamatan').selectedIndex == 0){
+								createAlert("kecamatan", "Pilih Kecamatan Anda!")
+							}
+
+							if(document.getElementById('kelurahan').selectedIndex == 0){
+								createAlert("kelurahan", "Pilih Kelurahan Anda!")
 							}
 
 							stepOne = Object.values(informasiPersonal).every(x => x !== '')
 							if(stepOne){
 								progress_state++
-								console.log(informasiPersonal)
 							}else{
 								alert("Lengkapi semua form!")
 							}
@@ -331,19 +389,23 @@
 						</div>
 						<div class="flex flex-direction-col flex-gap-semi-small">
 							<div class="title-input">Pilih Bank</div>
-							<select class="select-col" id="bank">
-								<option>Bank Mandiri</option>
-								<option>Bank BRI</option>
-								<option>Bank BCA</option>
+							<select class="select-col" id="bank" on:change={() => {
+								let selectedBank = document.getElementById('bank').value
+								informasiBank.bank = selectedBank
+							}} value="{informasiBank.bank}">
+								<option value="" disabled selected hidden>Pilih Bank</option>
+								<option value="BANK MANDIRI">Bank Mandiri</option>
+								<option value="BANK BRI">Bank BRI</option>
+								<option value="BANK BCA">Bank BCA</option>
 							</select>
 						</div>
 						<div class="flex flex-direction-col flex-gap-semi-small">
 							<div class="title-input">Nomor Rekening Bank</div>
-							<input type="text" placeholder="1014XXXXXXXXX" class="input-col" id="nomor-rekening">
+							<input type="text" placeholder="1014XXXXXXXXX" class="input-col" id="nomor-rekening" value="{informasiBank.nomor_rekening}">
 						</div>
 						<div class="flex flex-direction-col flex-gap-semi-small">
 							<div class="title-input">Cabang Bank</div>
-							<input type="text" placeholder="Jalan Sudirman" class="input-col" id="cabang-bank">
+							<input type="text" placeholder="Jalan Sudirman" class="input-col" id="cabang-bank" value="{informasiBank.cabang_bank}">
 						</div>
 					</div>
 					<div class="flex flex-direction-col flex-gap-regular w-100">
@@ -356,21 +418,31 @@
 						<div class="flex flex-gap-regular">
 							<button class="button-login-outline flex flex-center-horizontal flex-center-vertical flex-gap-regular" on:click={() => {
 								progress_state--
-								console.log(informasiPersonal)
 								setStepOneData()
 						}}>
 								<i class="fa-solid fa-angle-left"></i>
 								<span>Kembali</span>
 							</button>
 							<button class="button-login flex flex-center-horizontal flex-center-vertical flex-gap-regular" on:click={() => {
-								informasiBank.bank = document.getElementById('bank').value
-								informasiBank.nomor_rekening = document.getElementById('nomor-rekening').value
-								informasiBank.cabang_bank = document.getElementById('cabang-bank').value
+								if(document.getElementById('bank').selectedIndex == 0){
+									createAlert("bank", "Pilih Bank Anda")
+								}
+								
+								if(document.getElementById('nomor-rekening').value != ""){
+									informasiBank.nomor_rekening = document.getElementById('nomor-rekening').value
+								}else{
+									createAlert("nomor-rekening", "Isi Nomor Rekening Anda")
+								}
+
+								if(document.getElementById('cabang-bank').value != ""){
+									informasiBank.cabang_bank = document.getElementById('cabang-bank').value
+								}else{
+									createAlert("cabang-bank", "Isi Cabang Bank Anda")
+								}
 
 								stepTwo = Object.values(informasiBank).every(x => x !== '')
 								if(stepTwo){
 									progress_state++
-									console.log(informasiBank)
 								}else{
 									alert("Lengkapi semua form!")
 								}
@@ -394,7 +466,7 @@
 						</div>
 						<div class="flex flex-direction-col flex-gap-semi-small">
 							<div class="title-input">Direkrut Sebagai</div>
-							<select class="select-col" bind:value={jenis_marketing}>
+							<select class="select-col" id="jenis-marketing" bind:value={jenis_marketing}>
 								<option value="Lead Marketing">Lead Marketing</option>
 								<option value="Marketing">Marketing</option>
 							</select>
@@ -402,9 +474,10 @@
 						{#if jenis_marketing == 'Marketing'}
 							<div class="flex flex-direction-col flex-gap-semi-small">
 								<div class="title-input">Pilih Lead Marketing</div>
-								<select class="select-col">
-									<option value="Lead Marketing">Risky Setiawan</option>
-									<option value="Marketing">Toni Tonaldo</option>
+								<select class="select-col" id="lead-marketing" value="{penempatan.lead_marketing == null ? "" : penempatan.lead_marketing}">
+									<option value="" selected hidden disabled>Pilih Lead Marketing</option>
+									<option value="Risky Setiawan">Risky Setiawan</option>
+									<option value="Toni Tonaldo">Toni Tonaldo</option>
 								</select>
 							</div>
 						{/if}
@@ -418,13 +491,21 @@
 						</div>
 						<div class="flex flex-gap-regular">
 							<button class="button-login-outline flex flex-center-horizontal flex-center-vertical flex-gap-regular" on:click={() => {
-							progress_state--
+								progress_state--
 						}}>
 								<i class="fa-solid fa-angle-left"></i>
 								<span>Kembali</span>
 							</button>
 							<button class="button-login flex flex-center-horizontal flex-center-vertical flex-gap-regular" on:click={() => {
-							progress_state++
+								penempatan.rekrut_sebagai = jenis_marketing
+								
+								if(jenis_marketing == "Lead Marketing"){
+									penempatan.lead_marketing = null
+								}else{
+									penempatan.lead_marketing = document.getElementById('lead-marketing').value
+								}
+
+								progress_state++
 						}}>
 								<span>Berikutnya</span>
 								<i class="fa-solid fa-angle-right"></i>
