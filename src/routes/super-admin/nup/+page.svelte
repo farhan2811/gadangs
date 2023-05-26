@@ -3,6 +3,79 @@
 	import Navbar from '../../../components/navbar.svelte'
 	import { onMount } from 'svelte';
 	import {fly, scale} from 'svelte/transition'
+	import ApiController from '../../../ApiController'
+
+	let nups = null
+	let nupList = null
+	let perumahanList = null
+
+	let getNUPList = () => {
+		ApiController({
+			method: "GET",
+			endpoint: `nup`
+		}).then(response => {
+			nups = response.data.data
+			nupList = nups
+			for (let i = 0; i < 5; i++) {
+				let temp = {
+					"id_nup": i+2,
+					"nup": "-",
+					"marketing": `Bernio ${i + 2}`,
+					"lead_marketing": `Alex ${i + 2}`,
+					"perumahan": i % 2 == 1 ? "Puri Epicentrum Karawang" : "Griya Panorama Cimanggung",
+					"client": `Doremi ${i + 2}`,
+					"booking_fee": "1000000",
+					"tanggal_pembayaran": "25-05-2023",
+					"status": "pending",
+					"keterangan": "Berkas Tidak Lengkap",
+					"tanggal_submit": `25-${i != 4 ? `0${i+6}` : i + 6}-2023`
+				}
+				nups.push(temp)
+			}
+
+			console.log(nups)
+		})
+	}
+
+	let getPerumahanList = () => {
+		ApiController({
+			method: 'GET',
+			endpoint: `perumahan`
+		}).then(response => {
+			perumahanList = response.data.data
+			perumahanList.push({
+				kode : "GPC",
+				nama : "Griya Panorama Cimanggung"
+			})
+		})
+	}
+
+	let filterData = () => {
+		nups = nupList
+		let tempNupList = nups
+
+		let perum = document.getElementById('select-perum').value
+		let nup = document.getElementById('filter-nup').value
+		let pemesan = document.getElementById('filter-pemesan').value
+		let head_marketing = document.getElementById('filter-head-marketing').value
+		let marketing = document.getElementById('filter-marketing').value
+
+		tempNupList = tempNupList.filter(elm => {
+			return elm.perumahan.split(" ").map((elm) => {return elm[0]}).join("").includes(perum) &&
+				elm.id_nup.toString().includes(nup) &&
+				elm.client.toLowerCase().includes(pemesan) &&
+				elm.lead_marketing.toLowerCase().includes(head_marketing) &&
+				elm.marketing.toLowerCase().includes(marketing)
+		})
+
+		console.log(tempNupList)
+		nups = tempNupList
+	}
+
+	onMount(() => {
+		getNUPList()
+		getPerumahanList()
+	})
 	
 </script>
 
@@ -21,21 +94,34 @@
 				</div>
 				<div class="flex flex-direction-col flex-gap-regular">
 					<div class="flex">
-						<select class="select-col-2 w-25">
-							<option disabled selected>Semua Perum</option>
-							<option>Epicentrum Sepatan</option>
-							<option>Serpong</option>
+						<select id="select-perum" class="select-col-2 w-25" on:change={() => {
+							filterData()
+						}}>
+							<option selected value="">Semua Perum</option>
+							{#if perumahanList != null}
+							{#each perumahanList as perum}
+								<option value="{perum.kode}">{perum.nama}</option>
+							{/each}
+							{/if}
 						</select>
 					</div>
 					<div class="flex flex-gap-semi-large w-100">
-						<input type="text" placeholder="Cari NUP" class="input-col-2 w-15">
-						<input type="text" placeholder="Cari Pemesan" class="input-col-2 w-15">
-						<input type="text" placeholder="Cari Head Marketing" class="input-col-2 w-15">
-						<input type="text" placeholder="Cari Marketing" class="input-col-2 w-15">
+						<input type="text" placeholder="Cari NUP" class="input-col-2 w-15" id="filter-nup" on:input={() => {
+							filterData()
+						}}>
+						<input type="text" placeholder="Cari Pemesan" class="input-col-2 w-15" id="filter-pemesan" on:input={() => {
+							filterData()
+						}}>
+						<input type="text" placeholder="Cari Head Marketing" class="input-col-2 w-15" id="filter-head-marketing" on:input={() => {
+							filterData()
+						}}>
+						<input type="text" placeholder="Cari Marketing" class="input-col-2 w-15" id="filter-marketing" on:input={() => {
+							filterData()
+						}}>
 						<input type="date" class="input-col-2 w-15">
 						<input type="date" class="input-col-2 w-15">
 					</div>
-					<div class="scroll-x flex flex-direction-col flex-gap-regular">
+					<div class="{nups != null && nups.length == 0 ? 'scroll-x-hidden' : 'scroll-x'} flex flex-direction-col flex-gap-regular">
 						<div class="card-head w-content height-fit">
 							<div class="flex">
 								<div class="flex flex-gap-small flex-center-vertical w-10 border-separate">
@@ -93,45 +179,48 @@
 								</div>
 							</div>
 						</div>
-						<a href="/super-admin/nup/detail-nup" class="no-decor">
+						{#if nups != null}
+						{#if nups.length != 0}
+						{#each nups as nup}
+						<a href="/super-admin/nup/detail-nup/{nup.id_nup}" class="no-decor">
 							<div class="card-head w-content height-fit">
 								<div class="flex">
 									<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-										<div class="text-drop-card">30001</div>
+										<div class="text-drop-card">{nup.id_nup}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">Suryadi</div>
+										<div class="text-drop-card">{nup.client}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
 										<div class="text-drop-card">Karyawan</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">GPC</div>
+										<div class="text-drop-card">{nup.perumahan.split(" ").map((elm) => {return elm[0]}).join("")}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-										<div class="text-drop-card">Zaenal Muharom</div>
+										<div class="text-drop-card">{nup.lead_marketing}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">Zaenal Muharom</div>
+										<div class="text-drop-card">{nup.marketing}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">25 Apr 2018</div>
+										<div class="text-drop-card">{nup.tanggal_submit}</div>
 									</div>
 									<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-30">
 										<div class="flex w-100 flex-center-vertical">
 											<div class="flex flex-center-horizontal flex-center-vertical w-50">
-												<div class="text-drop-card padding-spec-nup-1 ">19 Apr 2018</div>
+												<div class="text-drop-card padding-spec-nup-1 ">{nup.tanggal_pembayaran}</div>
 											</div>
 											<div class="flex flex-center-horizontal flex-center-vertical w-50">
-												<div class="text-drop-card padding-spec-nup-1">Rp. 1.000.000</div>
+												<div class="text-drop-card padding-spec-nup-1">{nup.booking_fee}</div>
 											</div>
 										</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-approve">Approve</div>
+										<div class="text-approve">{nup.status}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-										<div class="text-drop-card">Sedang proses pemberkasan</div>
+										<div class="text-drop-card">{nup.keterangan}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
 										<a href="/super-admin/nup/edit-nup" class="no-decor"><img src="/images/icons/Edit.svg"></a>
@@ -140,6 +229,18 @@
 								</div>
 							</div>
 						</a>
+						{/each}
+						{:else}
+						<div class="card-head height-fit">
+							<div class="flex flex-center-horizontal">
+								<div class="flex flex-gap-small flex-center-vertical no-border-table">
+									<div class="text-drop-card">Data tidak ada</div>
+								</div>
+							</div>	
+						</div>
+						{/if}
+						{/if}
+						<!-- 
 						<div class="card-head w-content height-fit">
 							<div class="flex">
 								<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
@@ -499,52 +600,7 @@
 									<img src="/images/icons/Delete.svg">
 								</div>
 							</div>
-						</div>
-						<div class="card-head w-content height-fit">
-							<div class="flex">
-								<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-									<div class="text-drop-card">30001</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">Suryadi</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">Karyawan</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">GPC</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-									<div class="text-drop-card">Zaenal Muharom</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">Zaenal Muharom</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">25 Apr 2018</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-30">
-									<div class="flex w-100 flex-center-vertical">
-										<div class="flex flex-center-horizontal flex-center-vertical w-50">
-											<div class="text-drop-card padding-spec-nup-1 ">19 Apr 2018</div>
-										</div>
-										<div class="flex flex-center-horizontal flex-center-vertical w-50">
-											<div class="text-drop-card padding-spec-nup-1">Rp. 1.000.000</div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-approve">Approve</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card">Sedang proses pemberkasan</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-									<img src="/images/icons/Edit.svg">
-									<img src="/images/icons/Delete.svg">
-								</div>
-							</div>
-						</div>
+						</div> -->
 					</div>
 					<div class="card w-100 height-fit">
 						<div class="flex flex-between-horizontal">
@@ -553,7 +609,7 @@
 								<select class="select-sort">
 									<option>10</option>
 								</select>
-								<div class="text-display-sort">dari <span class="bold-number">28</span> data NUP</div>
+								<div class="text-display-sort">dari <span class="bold-number">{nupList == null ? '' : nupList.length}</span> data NUP</div>
 							</div>
 							<div class="flex flex-gap-regular flex-center-vertical">
 								<div class="flex flex-center-vertical flex-center-horizontal border-pagination"><img src="/images/icons/Arrow_Left.svg"></div>

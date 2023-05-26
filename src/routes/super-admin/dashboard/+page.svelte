@@ -3,8 +3,25 @@
 	import Navbar from '../../../components/navbar.svelte'
 	import { onMount } from 'svelte';
 	import {fly, scale} from 'svelte/transition'
+	import ApiController from '../../../ApiController';
 	let active = 0
-	onMount(() => {
+
+	let countNup = null
+	let yearlySale = null
+
+	let getDashboard = () => {
+		ApiController({
+			method: "GET",
+			endpoint: `dashboard`
+		}).then(response => {
+			let data = response.data
+			countNup = data.nup
+			yearlySale = data.penjualan_tahunan
+			setChart(yearlySale)
+		})
+	}
+
+	let setChart = (data) => {
 		var ctx = document.getElementById("myChart").getContext('2d');
 		ctx.canvas.width = 300;
 		ctx.canvas.height = 200;
@@ -36,14 +53,18 @@
             },
             options: {
                 scales: {
-                    yAxes: [{
+                    yAxes: {
                         ticks: {
                             beginAtZero:true
                         }
-                    }]
+                    }
                 }
             }
         });
+	}
+
+	onMount(() => {
+		getDashboard()
 	})
 </script>
 
@@ -64,8 +85,8 @@
 							<div class="flex flex-direction-col">
 								<div class="title-small-card-dashboard">Total NUP</div>
 								<div class="flex flex-center-vertical flex-gap-small">
-									<div class="value-small-card-dashboard">1000</div>
-									<div class="unit-small-card-dashboard">Unit</div>
+									<div class="value-small-card-dashboard">{countNup == null ? 0 : countNup}</div>
+									<div class="unit-small-card-dashboard">NUP</div>
 								</div>
 							</div>
 						</div>
