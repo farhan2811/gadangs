@@ -12,6 +12,7 @@
 	let kecamatan = null
 	let kelurahan = null
 	let posCode = null
+	let leadMarketing = null
 
 	let stepOne = false
 	let stepTwo = false
@@ -203,8 +204,58 @@
 		})
 	}
 
+	let doRegister = () => {
+		let bodyFormData = new FormData()
+
+		bodyFormData.append('email', informasiPersonal.email)
+		bodyFormData.append('password', 'default')
+		bodyFormData.append('nama', informasiPersonal.nama_lengkap)
+		bodyFormData.append('alamat', `${informasiPersonal.alamat}, ${informasiPersonal.kelurahan}, ${informasiPersonal.kecamatan}, ${informasiPersonal.kabupaten}, ${informasiPersonal.provinsi} ${informasiPersonal.kode_pos} Indonesia`)
+		bodyFormData.append('tanggal_lahir', '1999-01-19')
+		bodyFormData.append('nama_bank', informasiBank.bank)
+		bodyFormData.append('cabang_bank', informasiBank.cabang_bank)
+		bodyFormData.append('no_ktp', informasiPersonal.nomor_ktp)
+		bodyFormData.append('fc_ktp', berkas.ktp)
+		bodyFormData.append('fc_npwp', berkas.npwp)
+		bodyFormData.append('fc_rekening', berkas.buku_rekening)
+		bodyFormData.append('fc_perjanjian_kerja', berkas.spk_marketing)
+
+		ApiController({
+			method: 'POST',
+			endpoint: `register`,
+			datas: bodyFormData,
+			sendForm: true
+		}).then(response => {
+			if(response.data.status == 200){
+				alert(response.data.message)
+				window.location.href = '/'
+			}
+		})
+	}
+
+	let getLeadMarketing = () => {
+		ApiController({
+			method: "GET",
+			endpoint: `lead-marketing`
+		}).then(response => {
+			leadMarketing = response.data.data
+			console.log(leadMarketing)
+		})
+	}
+
+	let setSelectedLeadMarketing = () => {
+		// if(penempatan.selectedIndex != undefined){
+		// 	document.getElementById('lead-marketing').selectedIndex = penempatan.selectedIndex
+		// }else{
+		// 	document.getElementById('lead-marketing').selectedIndex = 0 
+		// }
+
+		return ""
+	}
+
 	onMount(() => {
 		getProvinsi()
+		getLeadMarketing()
 	})
 
 </script>
@@ -491,12 +542,14 @@
 						{#if jenis_marketing == 'Marketing'}
 							<div class="flex flex-direction-col flex-gap-semi-small">
 								<div class="title-input">Pilih Lead Marketing</div>
-								<select class="select-col" id="lead-marketing" value="{penempatan.lead_marketing == null ? "" : penempatan.lead_marketing}">
+								<select class="select-col" id="lead-marketing">
 									<option value="" selected hidden disabled>Pilih Lead Marketing</option>
-									<option value="Risky Setiawan">Risky Setiawan</option>
-									<option value="Toni Tonaldo">Toni Tonaldo</option>
+									{#each leadMarketing as lead}
+									<option value="{lead.id_user}">{lead.nama}</option>
+									{/each}
 								</select>
 							</div>
+							{setSelectedLeadMarketing()}
 						{/if}
 					</div>
 					<div class="flex flex-direction-col flex-gap-regular w-100">
@@ -521,6 +574,8 @@
 								}else{
 									penempatan.lead_marketing = document.getElementById('lead-marketing').value
 								}
+
+								console.log(penempatan)
 
 								progress_state++
 						}}>
@@ -599,7 +654,7 @@
 
 								stepFour = Object.values(berkas).every(x => x !== null)
 								if(stepFour){
-									console.log(berkas)
+									doRegister()
 								}else{
 									alert("Lengkapi semua form!")
 								}
