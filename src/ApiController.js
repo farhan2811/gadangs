@@ -13,35 +13,36 @@ const ApiController = async info => {
             console.log(err)
         }
     } else if(info['method'] == 'POST'){
-        console.log("test")
-        console.log(info['datas'])
-        try{
-            const resp = await axios.post(apiLink, info['datas'], { headers: { Authorization: "Bearer " + AuthStr } })
-            return resp
-        }catch(err){
-            console.log(err)
-        }
-
-        // if(info['sendForm'] != null ){
-        //     let head = info['datas']
-        //     try{
-        //         const resp = await axios.post(apiLink, info['datas'], {
-        //             headers: {"Content-Type": "multipart/form-data"}
-        //         })
-
-        //         return resp
-        //     }catch(err){
-        //         console.log(err)
-        //     }
-        // }else{
-        //     console.log(info['datas'])
-        //     try{
-        //         const resp = await axios.post(apiLink, info['datas'], { headers: { Authorization: "Bearer " + AuthStr } })
-        //         return resp
-        //     }catch(err){
-        //         console.log(err)
-        //     }
+        // console.log("test")
+        // console.log(info['datas'])
+        // console.log(info['sendForm'])
+        // try{
+        //     const resp = await axios.post(apiLink, info['datas'], { headers: { Authorization: "Bearer " + AuthStr } })
+        //     return resp
+        // }catch(err){
+        //     console.log(err)
         // }
+
+        if(info['sendForm'] != null ){
+            let head = info['datas']
+            try{
+                const resp = await axios.post(apiLink, info['datas'], {
+                    headers: {"Content-Type": "multipart/form-data"}
+                })
+
+                return resp
+            }catch(err){
+                console.log(err)
+            }
+        }else{
+            console.log(info['datas'])
+            try{
+                const resp = await axios.post(apiLink, info['datas'], { headers: { Authorization: "Bearer " + AuthStr } })
+                return resp
+            }catch(err){
+                console.log(err)
+            }
+        }
     }
 }
 
