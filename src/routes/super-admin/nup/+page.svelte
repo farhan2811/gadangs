@@ -22,18 +22,20 @@
 					"nup": "-",
 					"marketing": `Bernio ${i + 2}`,
 					"lead_marketing": `Alex ${i + 2}`,
-					"perumahan": i % 2 == 1 ? "Puri Epicentrum Karawang" : "Griya Panorama Cimanggung",
-					"client": `Doremi ${i + 2}`,
+					"perumahan": i % 2 == 1 ? "PEK" : "GPC",
+					"client": {
+						"nama_client" : `Doremi ${i + 2}`,
+						"pekerjaan" : 'Astronot'
+					},
 					"booking_fee": "1000000",
 					"tanggal_pembayaran": "25-05-2023",
-					"status": "pending",
+					"status_ho": "pending",
+					"status_finance": "pending",
 					"keterangan": "Berkas Tidak Lengkap",
 					"tanggal_submit": `25-${i != 4 ? `0${i+6}` : i + 6}-2023`
 				}
 				nups.push(temp)
 			}
-
-			console.log(nups)
 		})
 	}
 
@@ -61,14 +63,13 @@
 		let marketing = document.getElementById('filter-marketing').value
 
 		tempNupList = tempNupList.filter(elm => {
-			return elm.perumahan.split(" ").map((elm) => {return elm[0]}).join("").includes(perum) &&
+			return elm.perumahan.includes(perum) &&
 				elm.id_nup.toString().includes(nup) &&
-				elm.client.toLowerCase().includes(pemesan) &&
+				elm.client.nama_client.toLowerCase().includes(pemesan) &&
 				elm.lead_marketing.toLowerCase().includes(head_marketing) &&
 				elm.marketing.toLowerCase().includes(marketing)
 		})
 
-		console.log(tempNupList)
 		nups = tempNupList
 	}
 
@@ -189,13 +190,13 @@
 										<div class="text-drop-card">{nup.id_nup}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">{nup.client}</div>
+										<div class="text-drop-card">{nup.client.nama_client}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">Karyawan</div>
+										<div class="text-drop-card">{nup.client.pekerjaan}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">{nup.perumahan.split(" ").map((elm) => {return elm[0]}).join("")}</div>
+										<div class="text-drop-card">{nup.perumahan}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
 										<div class="text-drop-card">{nup.lead_marketing}</div>
@@ -216,8 +217,14 @@
 											</div>
 										</div>
 									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-approve">{nup.status}</div>
+									<div class="flex flex-direction-col flex-gap-small flex-center-vertical w-20 no-border-table">
+										{#if nup.status_ho == 'pending'}
+										<div class="text-pending">{nup.status_ho[0].toUpperCase() + nup.status_ho.slice(1, nup.status_ho.length)}</div>
+										{:else if nup.status_ho == 'approve'}
+										<div class="text-approve">{nup.status_ho[0].toUpperCase() + nup.status_ho.slice(1, nup.status_ho.length)}</div>
+										{:else}
+										<div class="text-reject">{nup.status_ho[0].toUpperCase() + nup.status_ho.slice(1, nup.status_ho.length)}</div>
+										{/if}
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
 										<div class="text-drop-card">{nup.keterangan}</div>

@@ -4,9 +4,14 @@
 	import { onMount } from 'svelte';
 	import {fly, scale} from 'svelte/transition'
 	import ApiController from '../../../ApiController';
+	import { each } from 'svelte/internal';
 	let active = 0
 
 	let countNup = null
+	let countPemberkasan = null
+	let countPengajuan = null
+	let countGriya = null
+	let countUnit = null
 	let yearlySale = null
 
 	let getDashboard = () => {
@@ -16,38 +21,50 @@
 		}).then(response => {
 			let data = response.data
 			countNup = data.nup
+			countPemberkasan = data.total_pemberkasan
+			countPengajuan = data.total_pengajuan
+			countGriya = data.total_griya
+			countUnit = data.total_unit
 			yearlySale = data.penjualan_tahunan
 			setChart(yearlySale)
 		})
 	}
 
+	let randomRGBA = () => {
+		let r = Math.floor(Math.random() * 256);
+		let g = Math.floor(Math.random() * 256);
+		let b = Math.floor(Math.random() * 256);
+		return 'rgba(' + r + ',' + g + ',' + b;
+	}
+
 	let setChart = (data) => {
+		let preparedLabel = []
+		let preparedData = []
+		let preparedBgColor = []
+		let preparedBorderColor = []
+
+		data.forEach((d, i) => {
+			let curColor = randomRGBA()
+			const date = new Date()
+			date.setMonth(i)
+			preparedLabel.push(date.toLocaleString('en-US', {month : 'long'}))
+			preparedData.push(d.views)
+			preparedBgColor.push(curColor + ', 0.2)')
+			preparedBorderColor.push(curColor + ', 0.8)')
+		})
+
 		var ctx = document.getElementById("myChart").getContext('2d');
 		ctx.canvas.width = 300;
 		ctx.canvas.height = 200;
         var myChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ["January", "February", "March", "April", "May", "June"],
+                labels: preparedLabel,
                 datasets: [{
-                    label: 'Penjualan dalam 6 bulan terakhir',
-                    data: [12, 19, 15, 7, 12, 5],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255,99,132,1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
+                    label: 'Total penjualan',
+                    data: preparedData,
+                    backgroundColor: preparedBgColor,
+					borderColor: preparedBorderColor,
                     borderWidth: 1
                 }]
             },
@@ -97,7 +114,7 @@
 							<div class="flex flex-direction-col">
 								<div class="title-small-card-dashboard">Total Pemberkasan</div>
 								<div class="flex flex-center-vertical flex-gap-small">
-									<div class="value-small-card-dashboard">62</div>
+									<div class="value-small-card-dashboard">{countPemberkasan == null ? 0 : countPemberkasan}</div>
 									<div class="unit-small-card-dashboard">Pengajuan</div>
 								</div>
 							</div>
@@ -109,7 +126,7 @@
 							<div class="flex flex-direction-col">
 								<div class="title-small-card-dashboard">Pengajuan </div>
 								<div class="flex flex-center-vertical flex-gap-small">
-									<div class="value-small-card-dashboard">1000</div>
+									<div class="value-small-card-dashboard">{countPengajuan == null ? 0 : countPengajuan}</div>
 									<div class="unit-small-card-dashboard">Pengajuan</div>
 								</div>
 							</div>
@@ -121,7 +138,7 @@
 							<div class="flex flex-direction-col">
 								<div class="title-small-card-dashboard">Total Griya</div>
 								<div class="flex flex-center-vertical flex-gap-small">
-									<div class="value-small-card-dashboard">10</div>
+									<div class="value-small-card-dashboard">{countGriya == null ? 0 : countGriya}</div>
 									<div class="unit-small-card-dashboard">Griya</div>
 								</div>
 							</div>
@@ -133,7 +150,7 @@
 							<div class="flex flex-direction-col">
 								<div class="title-small-card-dashboard">Total Unit</div>
 								<div class="flex flex-center-vertical flex-gap-small">
-									<div class="value-small-card-dashboard">75</div>
+									<div class="value-small-card-dashboard">{countUnit == null ? 0 : countUnit}</div>
 									<div class="unit-small-card-dashboard">Unit</div>
 								</div>
 							</div>

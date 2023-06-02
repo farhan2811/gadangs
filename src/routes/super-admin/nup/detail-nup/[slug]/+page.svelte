@@ -61,13 +61,13 @@
 								<div class="main-sub-title-card-detail">Nomor Urut Pemesan: {nup.id_nup}</div>
 							</div>
 							<div class="w-50 flex flex-gap-regular">
-								<div class="label-success flex flex-center-horizontal flex-gap-small">
-									<span>Approved HO</span>
-									<img src="/images/icons/Check_White.svg">
+								<div class="{nup.status_ho == "pending" ? 'label-pending' : 'label-success'} flex flex-center-horizontal flex-gap-small">
+									<span>{nup.status_ho[0].toUpperCase() + nup.status_ho.slice(1, nup.status_ho.length)} HO</span>
+									<img src="/images/icons/{nup.status_ho == 'pending' ? 'Info.svg' : 'Check_White.svg'}">
 								</div>
-								<div class="label-success flex flex-center-horizontal flex-gap-small">
+								<div class="{nup.status_finance == "pending" ? 'label-pending' : 'label-success'} flex flex-center-horizontal flex-gap-small">
 									<span>Approved Finance</span>
-									<img src="/images/icons/Check_White.svg">
+									<img src="/images/icons/{nup.status_finance == 'pending' ? 'Info.svg' : 'Check_White.svg'}">
 								</div>
 							</div>
 						</div>
@@ -173,7 +173,7 @@
 									<div class="flex w-100">
 										<div class="flex flex-direction-col w-50">
 											<div class="caption-card-detail">Status Nikah</div>
-											<div class="content-card-detail">Sudah Menikah</div>
+											<div class="content-card-detail">{nup.client.status_menikah == true ? 'Sudah' : 'Belum'} Menikah</div>
 										</div>
 										<div class="flex flex-direction-col w-50">
 											<div class="caption-card-detail">Alamat Email</div>
@@ -255,7 +255,7 @@
 										<div class="flex w-100">
 											<div class="flex flex-direction-col w-50">
 												<div class="caption-card-detail">Jenis Kelamin</div>
-												<div class="content-card-detail">Perempuan</div>
+												<div class="content-card-detail">{nup.client.jenis_kelamin == 'Laki-laki' ? 'Perempuan' : 'Laki-laki'}</div>
 											</div>
 											<div class="flex flex-direction-col w-50">
 												<div class="caption-card-detail">Nomor Telepon</div>
@@ -315,7 +315,7 @@
 											</div>
 											<div class="flex flex-direction-col w-50">
 												<div class="caption-card-detail">Nama Referensi</div>
-												<div class="content-card-detail">Dani</div>
+												<div class="content-card-detail">{nup.bi_checking.nama_referensi}</div>
 											</div>
 										</div>
 									</div>

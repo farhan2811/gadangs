@@ -3,7 +3,23 @@
 	import Navbar from '../../../components/navbar.svelte'
 	import { onMount } from 'svelte';
 	import {fly, scale} from 'svelte/transition'
+	import ApiController from '../../../ApiController';
+
+	let reportList = null
+
+	let getWeeklyReport = () => {
+		ApiController({
+			method: "POST",
+			endpoint: `weekly-report`
+		}).then(response => {
+			reportList =  response.data.data
+		})
+	}
 	
+	onMount(() => {
+		getWeeklyReport()
+	})
+
 </script>
 
 <div id="after-login-layout">
@@ -117,372 +133,71 @@
 								</div>
 							</div>
 						</div>
+						{#if reportList != null}
+						{#each reportList as report, i}
 						<div class="card-head w-content-2 height-fit">
 							<div class="flex">
 								<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-								<div class="text-drop-card">Ke-1</div>
+								<div class="text-drop-card">Ke-{i+1}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">01 Jan - 07 Jan</div>
+									<div class="text-drop-card">{report.rentang_waktu}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">0</div>
+									<div class="text-drop-card">{report.NUP}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">0</div>
+									<div class="text-drop-card">{report.pemberkasan}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-									<div class="text-drop-card">0</div>
+									<div class="text-drop-card">{report.proses_bank}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">0</div>
+									<div class="text-drop-card">{report.sp3k}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">0</div>
+									<div class="text-drop-card">{report.declined}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">0</div>
+									<div class="text-drop-card">{report.akad}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">0</div>
+									<div class="text-drop-card">{report.sppkr}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">0</div>
+									<div class="text-drop-card">{report.keaktifan_marketing_lead}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">0</div>
+									<div class="text-drop-card">{report.keaktifan_marketing_lepas}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">0</div>
+									<div class="text-drop-card">{report.ready_stok_legal}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">0</div>
+									<div class="text-drop-card">{report.ready_stok_teknis}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">0</div>
+									<div class="text-drop-card">{report.ready_stok_marketing}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">0</div>
+									<div class="text-drop-card">{report.sisa_spk3}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-									<div class="text-drop-card">0</div>
+									<div class="text-drop-card">{report.update_ready_stok_legal}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-									<div class="text-drop-card">0</div>
+									<div class="text-drop-card">{report.update_ready_stok_teknis}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-									<div class="text-drop-card">0</div>
+									<div class="text-drop-card">{report.update_ready_stok_marketing}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
 									<div class="text-drop-card">0</div>
 								</div>
 							</div>
 						</div>
-						<div class="card-head w-content-2 height-fit">
-								<div class="flex">
-									<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-									<div class="text-drop-card">Ke-1</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">01 Jan - 07 Jan</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-								</div>
-							</div>
-							<div class="card-head w-content-2 height-fit">
-								<div class="flex">
-									<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-									<div class="text-drop-card">Ke-1</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">01 Jan - 07 Jan</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-								</div>
-							</div>
-							<div class="card-head w-content-2 height-fit">
-								<div class="flex">
-									<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-									<div class="text-drop-card">Ke-1</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">01 Jan - 07 Jan</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-								</div>
-							</div>
-							<div class="card-head w-content-2 height-fit">
-								<div class="flex">
-									<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-									<div class="text-drop-card">Ke-1</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">01 Jan - 07 Jan</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-								</div>
-							</div>
-							<div class="card-head w-content-2 height-fit">
-								<div class="flex">
-									<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-									<div class="text-drop-card">Ke-1</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">01 Jan - 07 Jan</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-										<div class="text-drop-card">0</div>
-									</div>
-								</div>
-							</div>
+						{/each}
+						{/if}
 					</div>
 					<div class="card w-100 height-fit">
 						<div class="flex flex-between-horizontal">

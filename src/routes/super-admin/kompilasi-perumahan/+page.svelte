@@ -212,7 +212,7 @@
 								</div>
 							</div>
 						</div>
-						<a href="/super-admin/kompilasi-perumahan/detail-kompilasi-perumahan" class="no-decor">
+						<a href="/super-admin/kompilasi-perumahan/detail-kompilasi-perumahan/1" class="no-decor">
 							<div class="card-head w-content-2 height-fit">
 								<div class="flex">
 									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
