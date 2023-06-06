@@ -311,8 +311,22 @@
 						</a>
 					</div>
 					{/if}
+					{#if statusPointer == "KelolaPerum"}
+					<div class="flex flex-direction-col flex-gap-semi-large active-sidebar">
+						<a href="/super-admin/kelola-perum" class="no-decor">
+							<div class="flex flex-direction-col flex-gap-regular sidebar-content">
+								<div class="flex flex-gap-semi-small flex-center-vertical">
+									<div class="flex flex-gap-semi-small flex-center-vertical">
+										<img src="/images/icons/Building_04_Active.svg" class="icon-sidebar">
+										<span class="text-sidebar-active">Kelola Perum</span>
+									</div>
+								</div>
+							</div>
+						</a>
+					</div>
+					{:else}
 					<div class="flex flex-direction-col flex-gap-semi-large">
-						<a href="/super-admin/nup" class="no-decor">
+						<a href="/super-admin/kelola-perum" class="no-decor">
 							<div class="flex flex-direction-col flex-gap-regular sidebar-content">
 								<div class="flex flex-gap-semi-small flex-center-vertical">
 									<div class="flex flex-gap-semi-small flex-center-vertical">
@@ -323,6 +337,7 @@
 							</div>
 						</a>
 					</div>
+					{/if}
 					{#if statusPointer == "Nup"}
 						<div class="flex flex-direction-col flex-gap-semi-large active-sidebar">
 							<a href="/super-admin/nup" class="no-decor">
