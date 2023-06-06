@@ -4,6 +4,23 @@
 	import { onMount } from 'svelte';
 	import {fly, scale} from 'svelte/transition'
 	
+	import ApiController from '../../../ApiController'
+	
+	let perumahanList = []
+
+	let getPerumahanList = () => {
+		ApiController({
+			method: "GET",
+			endpoint: `perumahan`
+		}).then(response => {
+			perumahanList = response.data.data
+		})
+	}
+	
+	onMount(() => {
+		getPerumahanList()
+	})
+
 </script>
 
 <div id="after-login-layout">
@@ -81,14 +98,15 @@
 								</div>
 							</div>
 						</div>
+						{#each perumahanList as perumahan}
 						<a href="/super-admin/nup/detail-nup" class="no-decor">
 							<div class="card-head w-content-7 height-fit">
 								<div class="flex">
 									<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-										<div class="text-drop-card">P001</div>
+										<div class="text-drop-card">{perumahan.kode}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">New Mahakam Grande</div>
+										<div class="text-drop-card">{perumahan.nama}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
 										<div class="text-drop-card">NMG</div>
@@ -121,100 +139,13 @@
 										<div class="text-drop-card">150</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-10 border-non-separate">
-										<a href="/super-admin/kelola-perum/edit-perumahan" class="no-decor"><img src="/images/icons/Edit.svg"></a>
-										<img src="/images/icons/Delete.svg">
+										<img src="/images/icons/Edit.svg">
+									<img src="/images/icons/Delete.svg">
 									</div>
 								</div>
 							</div>
 						</a>
-						<div class="card-head w-content-7 height-fit">
-								<div class="flex">
-									<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-										<div class="text-drop-card">P001</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">New Mahakam Grande</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-										<div class="text-drop-card">NMG</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-										<div class="text-drop-card">Jl. Perintis Kemerdekaan No.42</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-15 no-border-table">
-										<div class="text-drop-card">Jakarta Timur</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-15 no-border-table">
-										<div class="text-drop-card">13210</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-15 no-border-table">
-										<div class="text-drop-card">08XXXXXXXXXX</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-15 no-border-table">
-										<div class="text-drop-card">202-XXX-XXXX</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">10</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">10</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-15 no-border-table">
-										<div class="text-drop-card">15</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-15 no-border-table">
-										<div class="text-drop-card">150</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-10 border-non-separate">
-										<img src="/images/icons/Edit.svg">
-									<img src="/images/icons/Delete.svg">
-									</div>
-								</div>
-							</div>
-							<div class="card-head w-content-7 height-fit">
-								<div class="flex">
-									<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-										<div class="text-drop-card">P001</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">New Mahakam Grande</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-										<div class="text-drop-card">NMG</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-										<div class="text-drop-card">Jl. Perintis Kemerdekaan No.42</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-15 no-border-table">
-										<div class="text-drop-card">Jakarta Timur</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-15 no-border-table">
-										<div class="text-drop-card">13210</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-15 no-border-table">
-										<div class="text-drop-card">08XXXXXXXXXX</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-15 no-border-table">
-										<div class="text-drop-card">202-XXX-XXXX</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">10</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">10</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-15 no-border-table">
-										<div class="text-drop-card">15</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-15 no-border-table">
-										<div class="text-drop-card">150</div>
-									</div>
-									<div class="flex flex-gap-small flex-center-vertical w-10 border-non-separate">
-										<img src="/images/icons/Edit.svg">
-									<img src="/images/icons/Delete.svg">
-									</div>
-								</div>
-							</div>
+						{/each}
 					</div>
 					<div class="card w-100 height-fit">
 						<div class="flex flex-between-horizontal">
