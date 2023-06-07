@@ -81,7 +81,7 @@
 								</div>
 							</div>
 						</div>
-						<a href="/super-admin/nup/detail-nup" class="no-decor">
+						<a href="/super-admin/kelola-perum/detail-perumahan" class="no-decor">
 							<div class="card-head w-content-7 height-fit">
 								<div class="flex">
 									<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">

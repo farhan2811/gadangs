@@ -368,6 +368,10 @@ html,body {
 	width: 50%;
 }
 
+.w-45 {
+	width: 455%;
+}
+
 .w-48 {
 	width: 48.5%;
 }
@@ -478,6 +482,12 @@ html,body {
 	text-align: left;
 	color: #0469FF;
 	cursor: pointer;
+}
+
+.img-perum {
+	background: url('../images/rumah.png');
+	background-size: cover;
+	border-radius: 8px;
 }
 
 .btn-fill {
