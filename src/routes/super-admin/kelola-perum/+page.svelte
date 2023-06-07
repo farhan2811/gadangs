@@ -16,7 +16,7 @@
 			perumahanList = response.data.data
 		})
 	}
-	
+
 	onMount(() => {
 		getPerumahanList()
 	})
@@ -99,7 +99,7 @@
 							</div>
 						</div>
 						{#each perumahanList as perumahan}
-						<a href="/super-admin/nup/detail-nup" class="no-decor">
+						<a href="/super-admin/kelola-perum/edit-perumahan" class="no-decor">
 							<div class="card-head w-content-7 height-fit">
 								<div class="flex">
 									<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
@@ -112,35 +112,35 @@
 										<div class="text-drop-card">NMG</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-										<div class="text-drop-card">Jl. Perintis Kemerdekaan No.42</div>
+										<div class="text-drop-card">{perumahan.alamat}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-15 no-border-table">
-										<div class="text-drop-card">Jakarta Timur</div>
+										<div class="text-drop-card">{perumahan.provinsi}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-15 no-border-table">
-										<div class="text-drop-card">13210</div>
+										<div class="text-drop-card">{perumahan.kodepos}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-15 no-border-table">
-										<div class="text-drop-card">08XXXXXXXXXX</div>
+										<div class="text-drop-card">{perumahan.telepon}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-15 no-border-table">
-										<div class="text-drop-card">202-XXX-XXXX</div>
+										<div class="text-drop-card">{perumahan.fax}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">10</div>
+										<div class="text-drop-card">{perumahan.jumlah_head_marketing}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">10</div>
+										<div class="text-drop-card">{perumahan.jumlah_marketing}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-15 no-border-table">
-										<div class="text-drop-card">15</div>
+										<div class="text-drop-card">{perumahan.jumlah_blok}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-15 no-border-table">
-										<div class="text-drop-card">150</div>
+										<div class="text-drop-card">{perumahan.jumlah_unit}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-10 border-non-separate">
 										<img src="/images/icons/Edit.svg">
-									<img src="/images/icons/Delete.svg">
+										<img src="/images/icons/Delete.svg">
 									</div>
 								</div>
 							</div>
@@ -154,7 +154,7 @@
 								<select class="select-sort">
 									<option>10</option>
 								</select>
-								<div class="text-display-sort">dari <span class="bold-number">28</span> data </div>
+								<div class="text-display-sort">dari <span class="bold-number">{perumahanList.length}</span> data </div>
 							</div>
 							<div class="flex flex-gap-regular flex-center-vertical">
 								<div class="flex flex-center-vertical flex-center-horizontal border-pagination"><img src="/images/icons/Arrow_Left.svg"></div>

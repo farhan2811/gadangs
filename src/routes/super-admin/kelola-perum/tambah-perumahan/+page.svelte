@@ -67,49 +67,49 @@
 							<div class="flex flex-gap-regular">
 								<div class="flex flex-direction-col flex-gap-small w-60">
 									<div class="title-input-nup">Nama Perumahan</div>
-									<input type="text" name="" class="input-nup" placeholder="nama perumahan.." bind:value={form.nama}>
+									<input type="text" name="" class="input-nup" placeholder="nama perumahan.." bind:value={form.nama} required />
 								</div>
 								<div class="flex flex-direction-col flex-gap-small w-40">
 									<div class="title-input-nup">Singkatan Perumahan</div>
-									<input type="text" name="" class="input-nup" placeholder="singkatan perumahan.." bind:value={form.kode}>
+									<input type="text" name="" class="input-nup" placeholder="singkatan perumahan.." bind:value={form.kode} required />
 								</div>
 							</div>
 							<div class="flex flex-gap-regular">
 								<div class="flex flex-direction-col flex-gap-small w-100">
 									<div class="title-input-nup">Alamat Perumahan</div>
-									<input type="text" name="" class="input-nup" placeholder="alamat perumahan.." bind:value={form.alamat}>
+									<input type="text" name="" class="input-nup" placeholder="alamat perumahan.." bind:value={form.alamat} required />
 								</div>
 							</div>
 							<div class="flex flex-gap-regular">
 								<div class="flex flex-direction-col flex-gap-small w-60">
 									<div class="title-input-nup">Provinsi</div>
-									<select class="select-nup">
+									<select class="select-nup" bind:value={form.provinsi}>
 										<option>Jawa Timur</option>
 									</select>
 								</div>
 								<div class="flex flex-direction-col flex-gap-small w-40">
 									<div class="title-input-nup">Kode Pos</div>
-									<input type="text" name="" class="input-nup" placeholder="kode pos.." bind:value={form.kodepos}>
+									<input type="text" name="" class="input-nup" placeholder="kode pos.." bind:value={form.kodepos} required />
 								</div>
 							</div>
 							<div class="flex flex-gap-regular">
 								<div class="flex flex-direction-col flex-gap-small w-50">
 									<div class="title-input-nup">Telepon</div>
-									<input type="text" name="" class="input-nup" placeholder="telepon.." bind:value={form.telepon}>
+									<input type="text" name="" class="input-nup" placeholder="telepon.." bind:value={form.telepon} required />
 								</div>
 								<div class="flex flex-direction-col flex-gap-small w-50">
 									<div class="title-input-nup">Fax</div>
-									<input type="text" name="" class="input-nup" placeholder="fax.." bind:value={form.fax}>
+									<input type="text" name="" class="input-nup" placeholder="fax.." bind:value={form.fax} required />
 								</div>
 							</div>
 							<div class="flex flex-gap-regular">
 								<div class="flex flex-direction-col flex-gap-small w-48">
 									<div class="title-input-nup">Gambar Perumahan</div>
-									<input type="file" class="file-nup" bind:files={form.foto}>
+									<input type="file" class="file-nup" bind:files={form.foto} required />
 								</div>
 								<div class="flex flex-direction-col flex-gap-small w-48">
 									<div class="title-input-nup">Site Plan</div>
-									<input type="file" class="file-nup" bind:files={form.foto_siteplan}>
+									<input type="file" class="file-nup" bind:files={form.foto_siteplan} required />
 								</div>
 							</div>
 						</div>
