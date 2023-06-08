@@ -7,13 +7,20 @@
 	import ApiController from '../../../ApiController'
 	
 	let perumahanList = []
-
+	let filterPerumahanByNama = []
+	let keywordKode = ''
 	let getPerumahanList = () => {
 		ApiController({
 			method: "GET",
 			endpoint: `perumahan`
 		}).then(response => {
 			perumahanList = response.data.data
+		})
+	}
+
+	function filterByKode() {
+		filterPerumahanByNama = perumahanList.filter((item) => {
+			return item.kode.toLowerCase().includes(keywordKode.toLowerCase())
 		})
 	}
 
@@ -38,7 +45,7 @@
 				</div>
 				<div class="flex flex-direction-col flex-gap-regular">
 					<div class="flex flex-gap-semi-large w-100">
-						<input type="text" placeholder="Cari Kode" class="input-col-2 w-15">
+						<input type="text" placeholder="Cari Kode" class="input-col-2 w-15" bind:value={keywordKode} on:input={filterByKode} />
 						<input type="text" placeholder="Cari Perum" class="input-col-2 w-15">
 					</div>
 					<div class="scroll-x flex flex-direction-col flex-gap-regular">
@@ -99,7 +106,7 @@
 							</div>
 						</div>
 						{#each perumahanList as perumahan}
-						<a href="/super-admin/kelola-perum/edit-perumahan" class="no-decor">
+						<a href="/super-admin/kelola-perum/detail-perumahan/{perumahan.id_perumahan}" class="no-decor">
 							<div class="card-head w-content-7 height-fit">
 								<div class="flex">
 									<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
@@ -139,7 +146,9 @@
 										<div class="text-drop-card">{perumahan.jumlah_unit}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-10 border-non-separate">
-										<img src="/images/icons/Edit.svg">
+										<a href="/super-admin/kelola-perum/edit-perumahan/{perumahan.id_perumahan}">
+											<img src="/images/icons/Edit.svg" />
+										</a>
 										<img src="/images/icons/Delete.svg">
 									</div>
 								</div>

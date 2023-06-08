@@ -3,7 +3,10 @@
 	import Navbar from '../../../../../components/navbar.svelte'
 	import { onMount } from 'svelte';
 	import {fly, scale} from 'svelte/transition'
+	export let data
 	
+	let idPerumahan = data.params.slug 
+	console.log(idPerumahan)
 </script>
 
 <div id="after-login-layout">
@@ -14,13 +17,13 @@
 			<div class="flex flex-direction-col flex-gap-large" in:fly={{ y: -20, duration: 600 }}>
 				<div class="flex flex-direction-col flex-gap-semi-large w-100">
 					<div class="flex flex-direction-col flex-gap-semi-small w-100">
-						<div class="title-content">Tambah Unit</div>
+						<div class="title-content">Edit Unit</div>
 						<div class="flex flex-gap-regular flex-center-vertical">
 							<div class="text-breadcrumb">Kelola Perum</div>
 							<img src="/images/icons/Arrow_Right.svg">
 							<div class="text-breadcrumb">Detail</div>
 							<img src="/images/icons/Arrow_Right.svg">
-							<div class="text-breadcrumb-active">Tambah Unit</div>
+							<div class="text-breadcrumb-active">Edit Unit</div>
 						</div>
 					</div>
 					<div class="card w-70">

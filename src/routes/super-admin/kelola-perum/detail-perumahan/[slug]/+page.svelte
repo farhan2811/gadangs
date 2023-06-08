@@ -1,9 +1,29 @@
 <script type="text/javascript">
-	import Sidebar from '../../../../components/sidebar.svelte'
-	import Navbar from '../../../../components/navbar.svelte'
+	import Sidebar from '../../../../../components/sidebar.svelte'
+	import Navbar from '../../../../../components/navbar.svelte'
 	import { onMount } from 'svelte';
 	import {fly, scale} from 'svelte/transition'
+	import ApiController from '../../../../../ApiController'
 	let tab_state = 1;
+
+	export let data
+	
+	let idPerumahan = data.params.slug 
+	let perumahan = []
+	let daftar_unit = []
+	let getDetailPerumahan = () => {
+		ApiController({
+			method: "GET",
+			endpoint: `perumahan/${idPerumahan}`
+		}).then(response => {
+			perumahan = response.data.data
+			daftar_unit = perumahan.daftar_unit
+		})
+	}
+
+	onMount(() => {
+		getDetailPerumahan()
+	})
 </script>
 
 <div id="after-login-layout">
@@ -35,36 +55,36 @@
 							<div class="w-50 flex flex-direction-col flex-gap-regular">
 								<div class="flex flex-direction-col">
 									<div class="caption-card-detail">Nama Perusahaan</div>
-									<div class="content-card-detail">Griya Panorama Cimanggung</div>
+									<div class="content-card-detail">{perumahan.nama}</div>
 								</div>
 								<div class="flex flex-direction-col">
 									<div class="caption-card-detail">Alamat Perumahan</div>
-									<div class="content-card-detail">Jl. Perumahan Kemerdekaan No. 42</div>
+									<div class="content-card-detail">{perumahan.alamat}</div>
 								</div>
 								<div class="flex w-100">
 									<div class="flex flex-direction-col w-50">
 										<div class="caption-card-detail">Provinsi</div>
-										<div class="content-card-detail">Jawa Timur</div>
+										<div class="content-card-detail">{perumahan.provinsi}</div>
 									</div>
 									<div class="flex flex-direction-col">
 										<div class="caption-card-detail">Kode Pos</div>
-										<div class="content-card-detail">13210</div>
+										<div class="content-card-detail">{perumahan.kodepos}</div>
 									</div>
 								</div>
 							</div>
 							<div class="w-50 flex flex-direction-col flex-gap-regular">
 								<div class="flex flex-direction-col">
 									<div class="caption-card-detail">Singkatan Perumahan</div>
-									<div class="content-card-detail">GPC</div>
+									<div class="content-card-detail">{perumahan.kode}</div>
 								</div>
 								<div class="flex flex-direction-col">
 									<div class="caption-card-detail">Telepon</div>
-									<div class="content-card-detail">08XXXXXXXXX</div>
+									<div class="content-card-detail">{perumahan.telepon}</div>
 								</div>
 								<div class="flex w-100">
 									<div class="flex flex-direction-col w-50">
 										<div class="caption-card-detail">Fax</div>
-										<div class="content-card-detail">202-XXX-XXX</div>
+										<div class="content-card-detail">{perumahan.fax}</div>
 									</div>
 									<div class="flex flex-direction-col">
 										<div class="caption-card-detail">Site Plan</div>
@@ -98,7 +118,7 @@
 							</select>
 						</div>
 						<div class="w-40 flex flex-end-horizontal">
-							<a href="/super-admin/kelola-perum/detail-perumahan/tambah-unit" class="no-decor"><button class="btn-fill flex flex-center-vertical flex-gap-small"><img src="/images/icons/Add_Plus.svg"> <span>Tambah Unit</span></button></a>
+							<a href="/super-admin/kelola-perum/detail-perumahan/[slug]/tambah-unit" class="no-decor"><button class="btn-fill flex flex-center-vertical flex-gap-small"><img src="/images/icons/Add_Plus.svg"> <span>Tambah Unit</span></button></a>
 						</div>
 					</div>
 					<div class="scroll-x flex flex-direction-col flex-gap-regular">
@@ -174,36 +194,37 @@
 								</div>
 							</div>
 						</div>
+						{#each daftar_unit as unit}
 						<div class="card-head w-content-7 height-fit">
 							<div class="flex">
 								<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-									<div class="text-drop-card">GPCAO02</div>
+									<div class="text-drop-card">{unit.kode_unit}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">AO</div>
+									<div class="text-drop-card">{unit.blok}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">2</div>
+									<div class="text-drop-card">{unit.no_perumahan}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">1</div>
+									<div class="text-drop-card">{unit.no_perumahan}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-									<div class="text-drop-card">36/104</div>
+									<div class="text-drop-card">{unit.tipe}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card">Rp. 5.000.000</div>
+									<div class="text-drop-card">{(unit.harga_unit).toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card">V.2018.04.14</div>
+									<div class="text-drop-card">{unit.pricelist	}</div>
 								</div>
 								<div class="flex flex-direction-col flex-center-horizontal flex-center-vertical w-80 border-separate-1">
 									<div class="flex w-100 flex-center-horizontal">
 										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 ">1 Feb 23</div>
+											<div class="text-drop-card padding-spec-nup-1 ">{new Date(unit.mulai_pengerjaan.split(" ")[0].split("-")[0], unit.mulai_pengerjaan.split(" ")[0].split("-")[1], unit.mulai_pengerjaan.split(" ")[0].split("-")[2]).toLocaleDateString('id', {dateStyle:'medium'})}</div>
 										</div>
 										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1">1 Feb 23</div>
+											<div class="text-drop-card padding-spec-nup-1">{new Date(unit.target_pengerjaan.split(" ")[0].split("-")[0], unit.target_pengerjaan.split(" ")[0].split("-")[1], unit.target_pengerjaan.split(" ")[0].split("-")[2]).toLocaleDateString('id', {dateStyle:'medium'})}</div>
 										</div>
 										<div class="flex flex-center-horizontal w-31">
 											<div class="text-drop-card padding-spec-nup-1 ">4 Bulan</div>
@@ -211,13 +232,13 @@
 									</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-approve">100%</div>
+									<div class="text-approve">{unit.progress_pembangunan}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-approve">100%</div>
+									<div class="text-approve">{unit.progress_teknis}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-approve">100%</div>
+									<div class="text-approve">{unit.progress_legal}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-60 no-border-table">
 									<div class="text-drop-card">SPPKR</div>
@@ -231,6 +252,7 @@
 									</div>
 							</div>
 						</div>
+						{/each}
 					</div>
 					<div class="card w-100 height-fit">
 						<div class="flex flex-between-horizontal">
@@ -281,16 +303,17 @@
 									</div>
 								</div>
 							</div>
+							{#each daftar_unit as unit_blok}
 							<div class="card-head w-100 height-fit">
 								<div class="flex">
 									<div class="flex flex-gap-small flex-center-vertical w-15 no-border-table">
-										<div class="text-drop-card">AA</div>
+										<div class="text-drop-card">{unit_blok.blok}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-										<div class="text-drop-card">Jl. Perintis Kemerdakaan No. 42, Blok AA</div>
+										<div class="text-drop-card">{perumahan.alamat}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-										<div class="text-drop-card">10</div>
+										<div class="text-drop-card">{unit_blok.stok_unit}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-10 border-non-separate">
 											<a href="/super-admin/kelola-perum/detail-perumahan/edit-blok" class="no-decor"><img src="/images/icons/Edit.svg"></a>
@@ -298,6 +321,7 @@
 										</div>
 								</div>
 							</div>
+							{/each}
 						</div>
 						<div class="card w-100 height-fit">
 							<div class="flex flex-between-horizontal">
@@ -306,7 +330,7 @@
 									<select class="select-sort">
 										<option>10</option>
 									</select>
-									<div class="text-display-sort">dari <span class="bold-number">28</span> data Rekap Data</div>
+									<div class="text-display-sort">dari <span class="bold-number">{daftar_unit.length}</span> data Rekap Data</div>
 								</div>
 								<div class="flex flex-gap-regular flex-center-vertical">
 									<div class="flex flex-center-vertical flex-center-horizontal border-pagination"><img src="/images/icons/Arrow_Left.svg"></div>
@@ -317,7 +341,7 @@
 						</div>
 					</div>
 				</div>
-				{/if}
+			{/if}
 			</div>
 		</div>
 	</div>
