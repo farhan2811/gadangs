@@ -383,6 +383,10 @@ html,body {
 	width: 50%;
 }
 
+.w-45 {
+	width: 455%;
+}
+
 .w-48 {
 	width: 48.5%;
 }
@@ -493,6 +497,12 @@ html,body {
 	text-align: left;
 	color: #0469FF;
 	cursor: pointer;
+}
+
+.img-perum {
+	background: url('../images/rumah.png');
+	background-size: cover;
+	border-radius: 8px;
 }
 
 .btn-fill {
@@ -620,8 +630,32 @@ html,body {
 	border-radius: 8px;
 }
 
+.w-1 {
+	width: 1%;
+}
+
+.w-2 {
+	width: 2%;
+}
+
+.w-3 {
+	width: 3%;
+}
+
+.w-4 {
+	width: 4%;
+}
+
 .w-10 {
 	width: 10%;
+}
+
+.w-12 {
+	width: 12.5%;
+}
+
+.w-14 {
+	width: 14.2%;
 }
 
 .w-5 {
@@ -1018,8 +1052,20 @@ html,body {
 	width: 4000px;
 }
 
+.w-content-7 {
+	width: 2500px;
+}
+
 .w-content-4 {
 	width: 10000px;
+}
+
+.w-content-6 {
+	width: 22000px;
+}
+
+.w-content-5 {
+	width: 6000px;
 }
 
 .border-separate {
@@ -1028,6 +1074,7 @@ html,body {
 }
 
 .no-border-table {
+	border-right: 1px solid rgba(0,0,0,0.0);
 	padding: 15px;
 }
 
@@ -1037,6 +1084,10 @@ html,body {
 
 .border-separate-2 {
 	border-right: 1px solid #E5E5E5;
+}
+
+.border-separate-3 {
+	border-right: 1px solid rgba(0,0,0,0.0);
 }
 
 .padding-spec-nup-1{
