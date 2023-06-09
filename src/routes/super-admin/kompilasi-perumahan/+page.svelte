@@ -3,6 +3,39 @@
 	import Navbar from '../../../components/navbar.svelte'
 	import { onMount } from 'svelte';
 	import {fly, scale} from 'svelte/transition'
+	import ApiController from '../../../ApiController';
+
+	let dataList = null
+	let status = false
+
+	let getKompilasiPerum = () => {
+		ApiController({
+			method:"GET",
+			endpoint:'kompilasi-perumahan'
+		}).then(response => {
+			dataList = response.data
+			status = true
+		})
+	}
+
+	let toDate = theDate => {
+		if(theDate == null){
+			return ""
+		}
+
+		return new Date(
+			theDate.split(" ")[0].split("-")[0], 
+			theDate.split(" ")[0].split("-")[1], 
+			theDate.split(" ")[0].split("-")[2])
+			.toLocaleDateString(
+				'id', 
+				{dateStyle:'medium'}
+			)
+	}
+
+	onMount(async () => {
+		getKompilasiPerum()
+	})
 	
 </script>
 
@@ -10,6 +43,7 @@
 	<Navbar/>
 	<div class="flex">
 		<Sidebar statusPointer="Kompilasi" pagePointer="admin"/>
+		{#if status}
 		<div class="w-80 content">
 			<div class="flex flex-direction-col flex-gap-large" in:fly={{ y: -20, duration: 600 }}>
 				<div class="flex flex-between-horizontal flex-center-vertical w-100">
@@ -212,1288 +246,142 @@
 								</div>
 							</div>
 						</div>
-						<a href="/super-admin/kompilasi-perumahan/detail-kompilasi-perumahan/1" class="no-decor">
+						{#each dataList as d}
+						<a href="/super-admin/kompilasi-perumahan/detail-kompilasi-perumahan/{d.id_unit}" class="no-decor">
 							<div class="card-head w-content-2 height-fit">
 								<div class="flex">
 									<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-										<div class="text-drop-card">NMGAO16</div>
+										<div class="text-drop-card">{d.kode_unit}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">NMG</div>
+										<div class="text-drop-card">{d.perumahan}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-										<div class="text-drop-card">AO</div>
+										<div class="text-drop-card">{d.blok}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
 										<div class="text-drop-card">16</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-										<div class="text-drop-card">36/104</div>
+										<div class="text-drop-card">{d.tipe}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-										<div class="text-drop-card">Rp. 5.000.000</div>
+										<div class="text-drop-card">Rp. {d.harga_unit}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-										<div class="text-drop-card">V.2018.04.14</div>
+										<div class="text-drop-card">{d.pricelist}</div>
 									</div>
 									<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-100">
 										<div class="flex w-100 flex-center-horizontal flex-center-vertical">
 											<div class="flex flex-center-horizontal w-31">
-												<div class="text-drop-card padding-spec-nup-1 ">1 Feb 23</div>
+												<div class="text-drop-card padding-spec-nup-1 ">{toDate(d.mulai_pengerjaan.split("T")[0])}</div>
 											</div>
 											<div class="flex flex-center-horizontal w-31">
-												<div class="text-drop-card padding-spec-nup-1">1 Feb 23</div>
+												<div class="text-drop-card padding-spec-nup-1">{toDate(d.target_pengerjaan.split("T")[0])}</div>
 											</div>
 											<div class="flex flex-center-horizontal w-31">
-												<div class="text-drop-card padding-spec-nup-1 ">1 Feb 23</div>
+												<div class="text-drop-card padding-spec-nup-1 ">{toDate(d.selesai_pengerjaan.split("T")[0])}</div>
 											</div>
 										</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-60 no-border-table">
-										<div class="text-approve">100%</div>
+										<div class="text-approve">{d.proses_pembangunan}%</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
+										{#if d.ketersediaan}
 										<div class="text-approve">Tersedia</div>
+										{:else}
+										<div class="text-reject">Tidak Tersedia</div>
+										{/if}
 									</div>
 									<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-100">
 										<div class="flex w-100 flex-center-horizontal">
 											<div class="flex flex-center-horizontal w-20">
-												<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
+												<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked={d.fasilitas_umum.air ? true : false}></div>
 											</div>
 											<div class="flex flex-center-horizontal w-20">
-												<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
+												<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked={d.fasilitas_umum.slo ? true : false}></div>
 											</div>
 											<div class="flex flex-center-horizontal w-20">
-												<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
+												<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked={d.fasilitas_umum.bp ? true : false}></div>
 											</div>
 											<div class="flex flex-center-horizontal w-40">
-												<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
+												<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked={d.fasilitas_umum.kwh_listrik ? true : false}></div>
 											</div>
 										</div>
 									</div>
 									<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-90">
 										<div class="flex w-100 flex-center-horizontal">
 											<div class="flex flex-center-horizontal w-60 flex-gap-semi-large">
-												<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked> <label>Makadam</label></div>
-												<div class="text-drop-card padding-spec-nup-1"><input type="radio" name=""> <label>Cor</label></div>
+												<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked={d.infrastruktur.jalan == 'makadam' ? true : false}> <label>Makadam</label></div>
+												<div class="text-drop-card padding-spec-nup-1"><input type="radio" name="" checked={d.infrastruktur.jalan == 'cor' ? true : false}> <label>Cor</label></div>
 											</div>
 											<div class="flex flex-center-horizontal w-40">
-												<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
+												<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked={d.infrastruktur.drainase ? true : false}></div>
 											</div>
 										</div>
 									</div>
 									<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-70">
 										<div class="flex w-100 flex-center-horizontal">
 											<div class="flex flex-center-horizontal w-50">
-												<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
+												<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked={d.slf.ssb ? true : false}></div>
 											</div>
 											<div class="flex flex-center-horizontal w-50">
-												<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
+												<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked={d.slf.flpp ? true : false}></div>
 											</div>
 										</div>
 									</div>
 									<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-50">
 										<div class="flex w-100 flex-center-horizontal">
 											<div class="flex flex-center-horizontal w-100">
-												<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
+												<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked={d.pengesahan_siteplan ? true : false}></div>
 											</div>
 										</div>
 									</div>
 									<div class="flex flex-direction-col flex-center-vertical w-100 flex-center-horizontal">
 										<div class="flex w-100 flex-center-horizontal">
 											<div class="flex flex-center-horizontal w-31">
-												<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
+												<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked={d.sertifikat.induk ? true : false}></div>
 											</div>
 											<div class="flex flex-center-horizontal w-31">
-												<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
+												<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked={d.sertifikat.sps ? true : false}></div>
 											</div>
 											<div class="flex flex-center-horizontal w-31">
-												<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
+												<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked={d.sertifikat.splitzing ? true : false}></div>
 											</div>
 										</div>
 									</div>
 									<div class="flex flex-direction-col flex-center-vertical w-70 flex-center-horizontal">
 										<div class="flex w-100 flex-center-horizontal">
 											<div class="flex flex-center-horizontal w-50">
-												<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
+												<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked={d['img/pbg'].induk ? true : false}></div>
 											</div>
 											<div class="flex flex-center-horizontal w-50">
-												<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
+												<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked={d['img/pbg'].splitzing ? true : false}></div>
 											</div>
 										</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-50 no-border-table">
-										<div class="text-drop-card">Selesai melakukan akad</div>
+										<div class="text-drop-card">{d.progress_ams}</div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical flex-center-horizontal w-30 no-border-table">
-										<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
+										<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked={d.unit_akad ? true : false}></div>
 									</div>
 									<div class="flex flex-gap-semi-large flex-center-vertical w-40 no-border-table">
-										<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked> <label>SPH</label></div>
-										<div class="text-drop-card padding-spec-nup-1"><input type="radio" name=""> <label>Cash</label></div>
+										<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked={d.sph == 'sph' ? true : false}> <label>SPH</label></div>
+										<div class="text-drop-card padding-spec-nup-1"><input type="radio" name="" checked={d.sph == 'cash' ? true : false}> <label>Cash</label></div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical flex-center-horizontal w-20 no-border-table">
-										<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
+										<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked={d.sppkr ? true : false}></div>
 									</div>
 									<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-										<a href="/super-admin/nup/edit-nup" class="no-decor"><img src="/images/icons/Edit.svg"></a>
+										<a href="/super-admin/kompilasi-perumahan/edit-kompilasi-perumahan/{d.id_unit}" class="no-decor"><img src="/images/icons/Edit.svg"></a>
 										<img src="/images/icons/Delete.svg">
 									</div>
 								</div>
 							</div>
 						</a>
-						<div class="card-head w-content-2 height-fit">
-							<div class="flex">
-								<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-									<div class="text-drop-card">NMGAO16</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">NMG</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">AO</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">16</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-									<div class="text-drop-card">36/104</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card">Rp. 5.000.000</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card">V.2018.04.14</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-100">
-									<div class="flex w-100 flex-center-horizontal flex-center-vertical">
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 ">1 Feb 23</div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1">1 Feb 23</div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 ">1 Feb 23</div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-60 no-border-table">
-									<div class="text-approve">100%</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-approve">Tersedia</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-100">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-40">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-90">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-60 flex-gap-semi-large">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked> <label>Makadam</label></div>
-											<div class="text-drop-card padding-spec-nup-1"><input type="radio" name=""> <label>Cor</label></div>
-										</div>
-										<div class="flex flex-center-horizontal w-40">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-70">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-50">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-100">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical w-100 flex-center-horizontal">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical w-70 flex-center-horizontal">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-50 no-border-table">
-									<div class="text-drop-card">Selesai melakukan akad</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical flex-center-horizontal w-30 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-								</div>
-								<div class="flex flex-gap-semi-large flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked> <label>SPH</label></div>
-									<div class="text-drop-card padding-spec-nup-1"><input type="radio" name=""> <label>Cash</label></div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical flex-center-horizontal w-20 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-									<a href="/super-admin/nup/edit-nup" class="no-decor"><img src="/images/icons/Edit.svg"></a>
-									<img src="/images/icons/Delete.svg">
-								</div>
-							</div>
-						</div>
-						<div class="card-head w-content-2 height-fit">
-							<div class="flex">
-								<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-									<div class="text-drop-card">NMGAO16</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">NMG</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">AO</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">16</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-									<div class="text-drop-card">36/104</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card">Rp. 5.000.000</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card">V.2018.04.14</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-100">
-									<div class="flex w-100 flex-center-horizontal flex-center-vertical">
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 ">1 Feb 23</div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1">1 Feb 23</div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 ">1 Feb 23</div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-60 no-border-table">
-									<div class="text-approve">100%</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-approve">Tersedia</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-100">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-40">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-90">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-60 flex-gap-semi-large">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked> <label>Makadam</label></div>
-											<div class="text-drop-card padding-spec-nup-1"><input type="radio" name=""> <label>Cor</label></div>
-										</div>
-										<div class="flex flex-center-horizontal w-40">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-70">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-50">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-100">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical w-100 flex-center-horizontal">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical w-70 flex-center-horizontal">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-50 no-border-table">
-									<div class="text-drop-card">Selesai melakukan akad</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical flex-center-horizontal w-30 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-								</div>
-								<div class="flex flex-gap-semi-large flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked> <label>SPH</label></div>
-									<div class="text-drop-card padding-spec-nup-1"><input type="radio" name=""> <label>Cash</label></div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical flex-center-horizontal w-20 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-									<a href="/super-admin/nup/edit-nup" class="no-decor"><img src="/images/icons/Edit.svg"></a>
-									<img src="/images/icons/Delete.svg">
-								</div>
-							</div>
-						</div>
-						<div class="card-head w-content-2 height-fit">
-							<div class="flex">
-								<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-									<div class="text-drop-card">NMGAO16</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">NMG</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">AO</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">16</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-									<div class="text-drop-card">36/104</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card">Rp. 5.000.000</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card">V.2018.04.14</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-100">
-									<div class="flex w-100 flex-center-horizontal flex-center-vertical">
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 ">1 Feb 23</div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1">1 Feb 23</div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 ">1 Feb 23</div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-60 no-border-table">
-									<div class="text-approve">100%</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-approve">Tersedia</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-100">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-40">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-90">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-60 flex-gap-semi-large">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked> <label>Makadam</label></div>
-											<div class="text-drop-card padding-spec-nup-1"><input type="radio" name=""> <label>Cor</label></div>
-										</div>
-										<div class="flex flex-center-horizontal w-40">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-70">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-50">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-100">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical w-100 flex-center-horizontal">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical w-70 flex-center-horizontal">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-50 no-border-table">
-									<div class="text-drop-card">Selesai melakukan akad</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical flex-center-horizontal w-30 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-								</div>
-								<div class="flex flex-gap-semi-large flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked> <label>SPH</label></div>
-									<div class="text-drop-card padding-spec-nup-1"><input type="radio" name=""> <label>Cash</label></div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical flex-center-horizontal w-20 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-									<a href="/super-admin/nup/edit-nup" class="no-decor"><img src="/images/icons/Edit.svg"></a>
-									<img src="/images/icons/Delete.svg">
-								</div>
-							</div>
-						</div>
-						<div class="card-head w-content-2 height-fit">
-							<div class="flex">
-								<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-									<div class="text-drop-card">NMGAO16</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">NMG</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">AO</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">16</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-									<div class="text-drop-card">36/104</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card">Rp. 5.000.000</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card">V.2018.04.14</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-100">
-									<div class="flex w-100 flex-center-horizontal flex-center-vertical">
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 ">1 Feb 23</div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1">1 Feb 23</div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 ">1 Feb 23</div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-60 no-border-table">
-									<div class="text-approve">100%</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-approve">Tersedia</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-100">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-40">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-90">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-60 flex-gap-semi-large">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked> <label>Makadam</label></div>
-											<div class="text-drop-card padding-spec-nup-1"><input type="radio" name=""> <label>Cor</label></div>
-										</div>
-										<div class="flex flex-center-horizontal w-40">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-70">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-50">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-100">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical w-100 flex-center-horizontal">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical w-70 flex-center-horizontal">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-50 no-border-table">
-									<div class="text-drop-card">Selesai melakukan akad</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical flex-center-horizontal w-30 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-								</div>
-								<div class="flex flex-gap-semi-large flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked> <label>SPH</label></div>
-									<div class="text-drop-card padding-spec-nup-1"><input type="radio" name=""> <label>Cash</label></div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical flex-center-horizontal w-20 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-									<a href="/super-admin/nup/edit-nup" class="no-decor"><img src="/images/icons/Edit.svg"></a>
-									<img src="/images/icons/Delete.svg">
-								</div>
-							</div>
-						</div>
-						<div class="card-head w-content-2 height-fit">
-							<div class="flex">
-								<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-									<div class="text-drop-card">NMGAO16</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">NMG</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">AO</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">16</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-									<div class="text-drop-card">36/104</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card">Rp. 5.000.000</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card">V.2018.04.14</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-100">
-									<div class="flex w-100 flex-center-horizontal flex-center-vertical">
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 ">1 Feb 23</div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1">1 Feb 23</div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 ">1 Feb 23</div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-60 no-border-table">
-									<div class="text-approve">100%</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-approve">Tersedia</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-100">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-40">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-90">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-60 flex-gap-semi-large">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked> <label>Makadam</label></div>
-											<div class="text-drop-card padding-spec-nup-1"><input type="radio" name=""> <label>Cor</label></div>
-										</div>
-										<div class="flex flex-center-horizontal w-40">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-70">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-50">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-100">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical w-100 flex-center-horizontal">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical w-70 flex-center-horizontal">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-50 no-border-table">
-									<div class="text-drop-card">Selesai melakukan akad</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical flex-center-horizontal w-30 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-								</div>
-								<div class="flex flex-gap-semi-large flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked> <label>SPH</label></div>
-									<div class="text-drop-card padding-spec-nup-1"><input type="radio" name=""> <label>Cash</label></div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical flex-center-horizontal w-20 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-									<a href="/super-admin/nup/edit-nup" class="no-decor"><img src="/images/icons/Edit.svg"></a>
-									<img src="/images/icons/Delete.svg">
-								</div>
-							</div>
-						</div>
-						<div class="card-head w-content-2 height-fit">
-							<div class="flex">
-								<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-									<div class="text-drop-card">NMGAO16</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">NMG</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">AO</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">16</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-									<div class="text-drop-card">36/104</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card">Rp. 5.000.000</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card">V.2018.04.14</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-100">
-									<div class="flex w-100 flex-center-horizontal flex-center-vertical">
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 ">1 Feb 23</div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1">1 Feb 23</div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 ">1 Feb 23</div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-60 no-border-table">
-									<div class="text-approve">100%</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-approve">Tersedia</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-100">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-40">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-90">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-60 flex-gap-semi-large">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked> <label>Makadam</label></div>
-											<div class="text-drop-card padding-spec-nup-1"><input type="radio" name=""> <label>Cor</label></div>
-										</div>
-										<div class="flex flex-center-horizontal w-40">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-70">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-50">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-100">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical w-100 flex-center-horizontal">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical w-70 flex-center-horizontal">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-50 no-border-table">
-									<div class="text-drop-card">Selesai melakukan akad</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical flex-center-horizontal w-30 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-								</div>
-								<div class="flex flex-gap-semi-large flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked> <label>SPH</label></div>
-									<div class="text-drop-card padding-spec-nup-1"><input type="radio" name=""> <label>Cash</label></div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical flex-center-horizontal w-20 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-									<a href="/super-admin/nup/edit-nup" class="no-decor"><img src="/images/icons/Edit.svg"></a>
-									<img src="/images/icons/Delete.svg">
-								</div>
-							</div>
-						</div>
-						<div class="card-head w-content-2 height-fit">
-							<div class="flex">
-								<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-									<div class="text-drop-card">NMGAO16</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">NMG</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">AO</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">16</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-									<div class="text-drop-card">36/104</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card">Rp. 5.000.000</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card">V.2018.04.14</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-100">
-									<div class="flex w-100 flex-center-horizontal flex-center-vertical">
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 ">1 Feb 23</div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1">1 Feb 23</div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 ">1 Feb 23</div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-60 no-border-table">
-									<div class="text-approve">100%</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-approve">Tersedia</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-100">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-40">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-90">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-60 flex-gap-semi-large">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked> <label>Makadam</label></div>
-											<div class="text-drop-card padding-spec-nup-1"><input type="radio" name=""> <label>Cor</label></div>
-										</div>
-										<div class="flex flex-center-horizontal w-40">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-70">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-50">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-100">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical w-100 flex-center-horizontal">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical w-70 flex-center-horizontal">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-50 no-border-table">
-									<div class="text-drop-card">Selesai melakukan akad</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical flex-center-horizontal w-30 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-								</div>
-								<div class="flex flex-gap-semi-large flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked> <label>SPH</label></div>
-									<div class="text-drop-card padding-spec-nup-1"><input type="radio" name=""> <label>Cash</label></div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical flex-center-horizontal w-20 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-									<a href="/super-admin/nup/edit-nup" class="no-decor"><img src="/images/icons/Edit.svg"></a>
-									<img src="/images/icons/Delete.svg">
-								</div>
-							</div>
-						</div>
-						<div class="card-head w-content-2 height-fit">
-							<div class="flex">
-								<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-									<div class="text-drop-card">NMGAO16</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">NMG</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">AO</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">16</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-									<div class="text-drop-card">36/104</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card">Rp. 5.000.000</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card">V.2018.04.14</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-100">
-									<div class="flex w-100 flex-center-horizontal flex-center-vertical">
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 ">1 Feb 23</div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1">1 Feb 23</div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 ">1 Feb 23</div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-60 no-border-table">
-									<div class="text-approve">100%</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-approve">Tersedia</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-100">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-40">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-90">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-60 flex-gap-semi-large">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked> <label>Makadam</label></div>
-											<div class="text-drop-card padding-spec-nup-1"><input type="radio" name=""> <label>Cor</label></div>
-										</div>
-										<div class="flex flex-center-horizontal w-40">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-70">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-50">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-100">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical w-100 flex-center-horizontal">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical w-70 flex-center-horizontal">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-50 no-border-table">
-									<div class="text-drop-card">Selesai melakukan akad</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical flex-center-horizontal w-30 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-								</div>
-								<div class="flex flex-gap-semi-large flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked> <label>SPH</label></div>
-									<div class="text-drop-card padding-spec-nup-1"><input type="radio" name=""> <label>Cash</label></div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical flex-center-horizontal w-20 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-									<a href="/super-admin/nup/edit-nup" class="no-decor"><img src="/images/icons/Edit.svg"></a>
-									<img src="/images/icons/Delete.svg">
-								</div>
-							</div>
-						</div>
-						<div class="card-head w-content-2 height-fit">
-							<div class="flex">
-								<div class="flex flex-gap-small flex-center-vertical w-30 no-border-table">
-									<div class="text-drop-card">NMGAO16</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">NMG</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">AO</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-20 no-border-table">
-									<div class="text-drop-card">16</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-25 no-border-table">
-									<div class="text-drop-card">36/104</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card">Rp. 5.000.000</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card">V.2018.04.14</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-100">
-									<div class="flex w-100 flex-center-horizontal flex-center-vertical">
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 ">1 Feb 23</div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1">1 Feb 23</div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 ">1 Feb 23</div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-60 no-border-table">
-									<div class="text-approve">100%</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
-									<div class="text-approve">Tersedia</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-100">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-20">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-40">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-90">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-60 flex-gap-semi-large">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked> <label>Makadam</label></div>
-											<div class="text-drop-card padding-spec-nup-1"><input type="radio" name=""> <label>Cor</label></div>
-										</div>
-										<div class="flex flex-center-horizontal w-40">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-70">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical flex-center-horizontal w-50">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-100">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical w-100 flex-center-horizontal">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-31">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-direction-col flex-center-vertical w-70 flex-center-horizontal">
-									<div class="flex w-100 flex-center-horizontal">
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1 "><input type="checkbox" name="" checked></div>
-										</div>
-										<div class="flex flex-center-horizontal w-50">
-											<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-										</div>
-									</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-50 no-border-table">
-									<div class="text-drop-card">Selesai melakukan akad</div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical flex-center-horizontal w-30 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-								</div>
-								<div class="flex flex-gap-semi-large flex-center-vertical w-40 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1 "><input type="radio" name="" checked> <label>SPH</label></div>
-									<div class="text-drop-card padding-spec-nup-1"><input type="radio" name=""> <label>Cash</label></div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical flex-center-horizontal w-20 no-border-table">
-									<div class="text-drop-card padding-spec-nup-1"><input type="checkbox" name="" checked></div>
-								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-10 no-border-table">
-									<a href="/super-admin/nup/edit-nup" class="no-decor"><img src="/images/icons/Edit.svg"></a>
-									<img src="/images/icons/Delete.svg">
-								</div>
-							</div>
-						</div>
+						{/each}
 					</div>
 					<div class="card w-100 height-fit">
 						<div class="flex flex-between-horizontal">
@@ -1514,5 +402,6 @@
 				</div>
 			</div>
 		</div>
+		{/if}
 	</div>
 </div>

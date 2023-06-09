@@ -1,13 +1,27 @@
 <script type="text/javascript">
-	import Sidebar from '../../../../components/sidebar.svelte'
-	import Navbar from '../../../../components/navbar.svelte'
+	import Sidebar from '../../../../../components/sidebar.svelte'
+	import Navbar from '../../../../../components/navbar.svelte'
 	import { onMount } from 'svelte';
 	import {fly, scale} from 'svelte/transition'
-	import ApiController from '../../../../ApiController';
+	import ApiController from '../../../../../ApiController';
 	import jquery from 'jquery';
-	
+
+	export let data
+
+	let unit = null
 	let perum = null
 	let status = false
+
+	let getDetail = () => {
+		ApiController({
+			method:"GET",
+			endpoint:`unit/${data.params.slug}`
+		}).then(response => {
+			unit = response.data
+			getPerum()
+			console.log(unit.informasi_head_finance)
+		})
+	}
 
 	let getPerum = () => {
 		ApiController({
@@ -19,12 +33,13 @@
 		})
 	}
 
-	let addUnit = () => {
+	let editUnit = () => {
 		if(jquery('#perumahan').val() == ""){
 			alert('Pilih Perumahan!')
 			return 0
 		}
 
+		let id_unit = data.params.slug
 		let perumahan = jquery('#perumahan').val()
 		let no_spk = jquery('#no_spk').val() == "" ? null : jquery('#no_spk').val()
 		let target_spk = jquery('#target_spk').val() == "" ? null : jquery('#target_spk').val()
@@ -65,16 +80,16 @@
 
 		ApiController({
 			method:"POST",
-			endpoint:`unit/add`,
+			endpoint:`unit/edit`,
 			datas:{
-				perumahan, no_spk, target_spk, mandor, blok, no_perumahan, unit, lantai, type,
+				id_unit, perumahan, no_spk, target_spk, mandor, blok, no_perumahan, unit, lantai, type,
 				harga_unit, pricelist, mulai_pengerjaan, target_pengerjaan, selesai_pengerjaan, keterangan_pengerjaan,
 				mulai_kavling, target_kavling, selesai_kavling, keterangan_kavling, notaris, tanggal_pembayaran_notaris, nominal_pembayaran_notaris,
 				pencairan_plafond, tanggal_bestek, nominal_bestek, tanggal_imb, nominal_imb, tanggal_balik_nama, nominal_balik_nama,
 				tanggal_pln, nominal_pln, tanggal_air, nominal_air, tanggal_retensi, foto_unit, bukti_notaris, bukti_retensi
 			}
 		}).then(response => {
-			if(response.data.msg == "Data Unit Added."){
+			if(response.data.msg == "Data Unit Updated."){
 				alert(response.data.msg)
 				window.location.href = '/super-admin/kompilasi-perumahan'
 			}
@@ -82,8 +97,9 @@
 	}
 
 	onMount(async () => {
-		getPerum()
+		getDetail()
 	})
+	
 </script>
 
 <div id="after-login-layout">
@@ -91,26 +107,25 @@
 	<div class="flex">
 		<Sidebar statusPointer="Kompilasi" pagePointer="admin"/>
 		<div class="w-80 content">
-			{#if status}
 			<div class="flex flex-direction-col flex-gap-large" in:fly={{ y: -20, duration: 600 }}>
 				<div class="flex flex-direction-col flex-gap-semi-large w-100">
 					<div class="flex flex-direction-col flex-gap-semi-small w-100">
-						<div class="title-content">Tambah Unit</div>
+						<div class="title-content">Edit Unit</div>
 						<div class="flex flex-gap-regular flex-center-vertical">
 							<div class="text-breadcrumb">Data Kompilasi Perumahan</div>
 							<img src="/images/icons/Arrow_Right.svg">
-							<div class="text-breadcrumb-active">Tambah</div>
+							<div class="text-breadcrumb-active">Edit</div>
 						</div>
 					</div>
+					{#if status}
 					<div class="card w-70">
 						<div class="flex flex-direction-col flex-gap-semi-large">
 							<div class="flex flex-gap-regular">
 								<div class="flex flex-direction-col flex-gap-small w-20">
 									<div class="title-input-nup">Pilih Perum</div>
-									<select class="select-nup" id="perumahan">
-										<option value="" selected hidden>Pilih Perumahan</option>
+									<select class="select-nup">
 										{#each perum as p}
-										<option value="{p.kode}">{p.kode}</option>
+										<option value="{p.kode}" selected={unit.informasi_unit.perumahan.split(" ").map(elm => elm[0]).join("") == p.kode ? true : false}>{p.kode}</option>
 										{/each}
 									</select>
 								</div>
@@ -118,50 +133,43 @@
 							<div class="flex flex-gap-regular">
 								<div class="flex flex-direction-col flex-gap-small w-50">
 									<div class="title-input-nup">No SPK</div>
-									<input type="text" name="" class="input-nup" placeholder="no spk.." id="no_spk">
+									<input type="text" name="" class="input-nup" placeholder="no spk.." id="no_spk" value="{unit.informasi_unit.no_spk == null ? '' : unit.informasi_unit.no_spk}">
 								</div>
 								<div class="flex flex-direction-col flex-gap-small w-50">
 									<div class="title-input-nup">Target SPK</div>
-									<input type="text" name="" class="input-nup" placeholder="target spk.." id="target_spk">
+									<input type="text" name="" class="input-nup" placeholder="target spk.." id="target_spk" value="{unit.informasi_unit.target_spk == null ? '' : unit.informasi_unit.target_spk}">
 								</div>
 							</div>
 							<div class="flex flex-gap-regular">
 								<div class="flex flex-direction-col flex-gap-small w-100">
 									<div class="title-input-nup">Subkon/Mandor</div>
-									<input type="text" name="" class="input-nup" placeholder="subkon/mandor.." id="mandor">
+									<input type="text" name="" class="input-nup" placeholder="subkon/mandor.." id="mandor" value="{unit.informasi_unit.mandor == null ? '' : unit.informasi_unit.mandor}">
 								</div>
 							</div>
 							<div class="flex flex-gap-regular">
 								<div class="flex flex-direction-col flex-gap-small w-25">
 									<div class="title-input-nup">Blok</div>
 									<select class="select-nup" id="blok">
-										<option>AA1</option>
-										<option>AA2</option>
-										<option>AA3</option>
-										<option>AA4</option>
-										<option>AA5</option>
-										<option>AA6</option>
-										<option>AA7</option>
-										<option>AA8</option>
-										<option>AA9</option>
-										<option>AA10</option>
+										<option value="A1" selected={unit.informasi_unit.blok == 'A1' ? true : false}>A1</option>
+										<option value="AA2" selected={unit.informasi_unit.blok == 'AA2' ? true : false}>AA2</option>
+										<option value="AA3" selected={unit.informasi_unit.blok == 'AA3' ? true : false}>AA3</option>
 									</select>
 								</div>
 								<div class="flex flex-direction-col flex-gap-small w-komp">
 									<div class="title-input-nup">No. Rumah</div>
-									<input type="text" name="" class="input-nup" placeholder="lantai.." id="no_perumahan">
+									<input type="text" name="" class="input-nup" placeholder="lantai.." id="no_perumahan" value="{unit.informasi_unit.no_rumah == null ? '' : unit.informasi_unit.no_rumah}">
 								</div>
 								<div class="flex flex-direction-col flex-gap-small w-komp">
 									<div class="title-input-nup">Lantai</div>
-									<input type="text" name="" class="input-nup" placeholder="lantai.." id="lantai">
+									<input type="text" name="" class="input-nup" placeholder="lantai.." id="lantai" value="{unit.informasi_unit.lantai == null ? '' : unit.informasi_unit.lantai}">
 								</div>
 								<div class="flex flex-direction-col flex-gap-small w-komp">
 									<div class="title-input-nup">Unit</div>
-									<input type="text" name="" class="input-nup" placeholder="unit.." id="unit">
+									<input type="text" name="" class="input-nup" placeholder="unit.." id="unit" value="{unit.informasi_unit.unit == null ? '' : unit.informasi_unit.unit}">
 								</div>
 								<div class="flex flex-direction-col flex-gap-small w-komp">
 									<div class="title-input-nup">Tipe</div>
-									<input type="text" name="" class="input-nup" placeholder="tipe.." id="type">
+									<input type="text" name="" class="input-nup" placeholder="tipe.." id="type" value="{unit.informasi_unit.tipe == null ? '' : unit.informasi_unit.tipe}">
 								</div>
 							</div>
 							<div class="flex flex-direction-col flex-gap-semi-small">
@@ -170,11 +178,11 @@
 									<div class="flex flex-gap-regular">
 										<div class="flex flex-direction-col flex-gap-small w-50">
 											<div class="title-input-nup">Harga Unit</div>
-											<input type="text" name="" class="input-nup" placeholder="harga unit.." id="harga_unit">
+											<input type="text" name="" class="input-nup" placeholder="harga unit.." id="harga_unit" value="{unit.informasi_unit.harga_unit == null ? '' : unit.informasi_unit.harga_unit}">
 										</div>
 										<div class="flex flex-direction-col flex-gap-small w-50">
 											<div class="title-input-nup">Versi Pricelist</div>
-											<input type="text" name="" class="input-nup" placeholder="versi pricelist.." id="pricelist">
+											<input type="text" name="" class="input-nup" placeholder="versi pricelist.." id="pricelist" value="{unit.informasi_unit.versi_pricelist == null ? '' : unit.informasi_unit.versi_pricelist}">
 										</div>
 									</div>
 								</div>
@@ -183,21 +191,21 @@
 									<div class="flex flex-gap-regular">
 										<div class="flex flex-direction-col flex-gap-small w-31">
 											<div class="title-input-nup">Mulai Pembangunan</div>
-											<input type="date" name="" class="input-nup" id="mulai_pengerjaan">
+											<input type="date" name="" class="input-nup" id="mulai_pengerjaan" value="{unit.informasi_unit.mulai_pembangunan == null ? '' : unit.informasi_unit.mulai_pembangunan.split(" ")[0]}">
 										</div>
 										<div class="flex flex-direction-col flex-gap-small w-31">
 											<div class="title-input-nup">Target Selesai</div>
-											<input type="date" name="" class="input-nup" id="target_pengerjaan">
+											<input type="date" name="" class="input-nup" id="target_pengerjaan" value="{unit.informasi_unit.target_selesai == null ? '' : unit.informasi_unit.target_selesai.split(" ")[0]}">
 										</div>
 										<div class="flex flex-direction-col flex-gap-small w-31">
 											<div class="title-input-nup">Selesai Pembangunan</div>
-											<input type="date" name="" class="input-nup" id="selesai_pengerjaan">
+											<input type="date" name="" class="input-nup" id="selesai_pengerjaan" value="{unit.informasi_unit.selesai_pembangunan == null ? '' : unit.informasi_unit.selesai_pembangunan.split(" ")[0]}">
 										</div>
 									</div>
 									<div class="flex flex-gap-regular">
 										<div class="flex flex-direction-col flex-gap-small w-100">
 											<div class="title-input-nup">Keterangan</div>
-											<textarea class="input-nup textarea-spec" placeholder="keterangan.." id="keterangan_pengerjaan"></textarea>
+											<textarea class="input-nup textarea-spec" placeholder="keterangan.." id="keterangan_pengerjaan">{unit.informasi_unit.keterangan == null ? '' : unit.informasi_unit.keterangan}</textarea>
 										</div>
 									</div>
 								</div>
@@ -206,42 +214,42 @@
 									<div class="flex flex-gap-regular">
 										<div class="flex flex-direction-col flex-gap-small w-31">
 											<div class="title-input-nup">Mulai Land Clearing</div>
-											<input type="date" name="" class="input-nup" id="mulai_kavling">
+											<input type="date" name="" class="input-nup" id="mulai_kavling" value="{unit.data_kavling.mulai_pembangunan == null ? '' : unit.data_kavling.mulai_pembangunan.split(" ")[0]}">
 										</div>
 										<div class="flex flex-direction-col flex-gap-small w-31">
 											<div class="title-input-nup">Target Selesai</div>
-											<input type="date" name="" class="input-nup" id="target_kavling">
+											<input type="date" name="" class="input-nup" id="target_kavling" value="{unit.data_kavling.target_selesai == null ? '' : unit.data_kavling.target_selesai.split(" ")[0]}">
 										</div>
 										<div class="flex flex-direction-col flex-gap-small w-31">
 											<div class="title-input-nup">Tanggal Selesai</div>
-											<input type="date" name="" class="input-nup" id="selesai_kavling">
+											<input type="date" name="" class="input-nup" id="selesai_kavling" value="{unit.data_kavling.selesai_pembangunan	 == null ? '' : unit.data_kavling.selesai_pembangunan	.split(" ")[0]}">
 										</div>
 									</div>
 									<div class="flex flex-gap-regular">
 										<div class="flex flex-direction-col flex-gap-small w-100">
 											<div class="title-input-nup">Keterangan</div>
-											<textarea class="input-nup textarea-spec" placeholder="keterangan.." id="keterangan_kavling"></textarea>
+											<textarea class="input-nup textarea-spec" placeholder="keterangan.." id="keterangan_kavling">{unit.data_kavling.keterangan == null ? '' : unit.data_kavling.keterangan}</textarea>
 										</div>
 									</div>
 								</div>
 								<div class="flex flex-gap-regular">
 									<div class="flex flex-direction-col flex-gap-small w-50">
 										<div class="title-input-nup">Nama Notaris</div>
-										<input type="text" name="" class="input-nup" placeholder="nama notaris..." id="notaris">
+										<input type="text" name="" class="input-nup" placeholder="nama notaris..." id="notaris" value="{unit.informasi_head_finance.retensi.notaris.nama == null ? '' : unit.informasi_head_finance.retensi.notaris.nama}">
 									</div>
 									<div class="flex flex-direction-col flex-gap-small w-50">
 										<div class="title-input-nup">Nominal Pembayaran Notaris</div>
-										<input type="text" name="" class="input-nup" placeholder="nominal pembayaran notaris.." id="nominal_pembayaran_notaris">
+										<input type="text" name="" class="input-nup" placeholder="nominal pembayaran notaris.." id="nominal_pembayaran_notaris" value="{unit.informasi_head_finance.notaris.biaya_notaris == null ? '' : unit.informasi_head_finance.notaris.biaya_notaris}">
 									</div>
 								</div>
 								<div class="flex flex-gap-regular">
 									<div class="flex flex-direction-col flex-gap-small w-50">
 										<div class="title-input-nup">Tanggal Pembayaran</div>
-										<input type="text" name="" class="input-nup" placeholder="tanggal pembayaran.." id="tanggal_pembayaran_notaris">
+										<input type="date" name="" class="input-nup" placeholder="tanggal pembayaran.." id="tanggal_pembayaran_notaris" value="{unit.informasi_head_finance.notaris.tanggal_biaya_notaris == null ? '' : unit.informasi_head_finance.notaris.tanggal_biaya_notaris.split(" ")[0]}">
 									</div>
 									<div class="flex flex-direction-col flex-gap-small w-50">
 										<div class="title-input-nup">Pencairan Plafond KPR</div>
-										<input type="text" name="" class="input-nup" placeholder="pencairan plafond kpr.." id="pencairan_plafond">
+										<input type="text" name="" class="input-nup" placeholder="pencairan plafond kpr.." id="pencairan_plafond" value="{unit.informasi_head_finance.retensi.plafond == null ? '' : unit.informasi_head_finance.retensi.plafond}">
 									</div>
 								</div>
 								<div class="title-input-nup">Bestek</div>
@@ -249,11 +257,11 @@
 									<div class="flex flex-gap-regular">
 										<div class="flex flex-direction-col flex-gap-small w-50">
 											<div class="title-input-nup">Tanggal Pencairan</div>
-											<input type="date" name="" class="input-nup" id="tanggal_bestek">
+											<input type="date" name="" class="input-nup" id="tanggal_bestek" value="{unit.informasi_head_finance.retensi_data.filter(elm => elm.jenis_data == 'bestek')[0] == null ? '' : unit.informasi_head_finance.retensi_data.filter(elm => elm.jenis_data == 'bestek')[0].tanggal_cair.split(" ")[0]}">
 										</div>
 										<div class="flex flex-direction-col flex-gap-small w-50">
 											<div class="title-input-nup">Nominal Pencairan</div>
-											<input type="text" name="" class="input-nup" placeholder="nominal pencairan.." id="nominal_bestek">
+											<input type="text" name="" class="input-nup" placeholder="nominal pencairan.." id="nominal_bestek" value="{unit.informasi_head_finance.retensi_data.filter(elm => elm.jenis_data == 'bestek')[0] == null ? '' : unit.informasi_head_finance.retensi_data.filter(elm => elm.jenis_data == 'bestek')[0].nilai}">
 										</div>
 									</div>
 								</div>
@@ -262,11 +270,11 @@
 									<div class="flex flex-gap-regular">
 										<div class="flex flex-direction-col flex-gap-small w-50">
 											<div class="title-input-nup">Tanggal Pencairan</div>
-											<input type="date" name="" class="input-nup" id="tanggal_imb">
+											<input type="date" name="" class="input-nup" id="tanggal_imb" value="{unit.informasi_head_finance.retensi_data.filter(elm => elm.jenis_data == 'imb')[0] == null ? '' : unit.informasi_head_finance.retensi_data.filter(elm => elm.jenis_data == 'imb')[0].tanggal_cair.split(" ")[0]}">
 										</div>
 										<div class="flex flex-direction-col flex-gap-small w-50">
 											<div class="title-input-nup">Nominal Pencairan</div>
-											<input type="text" name="" class="input-nup" placeholder="nominal pencairan.." id="nominal_imb">
+											<input type="text" name="" class="input-nup" placeholder="nominal pencairan.." id="nominal_imb" value="{unit.informasi_head_finance.retensi_data.filter(elm => elm.jenis_data == 'imb')[0] == null ? '' : unit.informasi_head_finance.retensi_data.filter(elm => elm.jenis_data == 'imb')[0].nilai}">
 										</div>
 									</div>
 								</div>
@@ -275,11 +283,11 @@
 									<div class="flex flex-gap-regular">
 										<div class="flex flex-direction-col flex-gap-small w-50">
 											<div class="title-input-nup">Tanggal Pencairan</div>
-											<input type="date" name="" class="input-nup" id="tanggal_balik_nama">
+											<input type="date" name="" class="input-nup" id="tanggal_balik_nama" value="{unit.informasi_head_finance.retensi_data.filter(elm => elm.jenis_data == 'sertifikat')[0] == null ? '' : unit.informasi_head_finance.retensi_data.filter(elm => elm.jenis_data == 'sertifikat')[0].tanggal_cair.split(" ")[0]}">
 										</div>
 										<div class="flex flex-direction-col flex-gap-small w-50">
 											<div class="title-input-nup">Nominal Pencairan</div>
-											<input type="text" name="" class="input-nup" placeholder="nominal pencairan.." id="nominal_balik_nama">
+											<input type="text" name="" class="input-nup" placeholder="nominal pencairan.." id="nominal_balik_nama" value="{unit.informasi_head_finance.retensi_data.filter(elm => elm.jenis_data == 'sertifikat')[0] == null ? '' : unit.informasi_head_finance.retensi_data.filter(elm => elm.jenis_data == 'sertifikat')[0].nilai}">
 										</div>
 									</div>
 								</div>
@@ -288,11 +296,11 @@
 									<div class="flex flex-gap-regular">
 										<div class="flex flex-direction-col flex-gap-small w-50">
 											<div class="title-input-nup">Tanggal Pencairan</div>
-											<input type="date" name="" class="input-nup" id="tanggal_pln">
+											<input type="date" name="" class="input-nup" id="tanggal_pln" value="{unit.informasi_head_finance.retensi_data.filter(elm => elm.jenis_data == 'listrik')[0] == null ? '' : unit.informasi_head_finance.retensi_data.filter(elm => elm.jenis_data == 'listrik')[0].tanggal_cair.split(" ")[0]}">
 										</div>
 										<div class="flex flex-direction-col flex-gap-small w-50">
 											<div class="title-input-nup">Nominal Pencairan</div>
-											<input type="text" name="" class="input-nup" placeholder="nominal pencairan.." id="nominal_pln">
+											<input type="text" name="" class="input-nup" placeholder="nominal pencairan.." id="nominal_pln" value="{unit.informasi_head_finance.retensi_data.filter(elm => elm.jenis_data == 'listrik')[0] == null ? '' : unit.informasi_head_finance.retensi_data.filter(elm => elm.jenis_data == 'listrik')[0].nilai}">
 										</div>
 									</div>
 								</div>
@@ -339,15 +347,15 @@
 					</div>
 					<div class="flex flex-end-horizontal w-70">
 						<div class="w-40 flex flex-gap-regular flex-end-horizontal">
-							<button class="btn-outline flex flex-center-vertical flex-gap-small" on:click={() => {
-								window.history.back()
-							}}><span>Batal</span></button>
-							<button class="btn-fill flex flex-center-vertical flex-gap-small" on:click={() => addUnit()}><span>Simpan Unit</span></button>
+							<button class="btn-outline flex flex-center-vertical flex-gap-small"><span>Batal</span></button>
+							<button class="btn-fill flex flex-center-vertical flex-gap-small" on:click={() => {
+								editUnit()
+							}}><span>Simpan Perubahan</span></button>
 						</div>
 					</div>
+					{/if}
 				</div>
 			</div>
-			{/if}
 		</div>
 	</div>
 </div>

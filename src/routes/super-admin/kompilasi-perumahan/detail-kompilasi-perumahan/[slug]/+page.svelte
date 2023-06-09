@@ -24,6 +24,21 @@
 	let informasiHeadFinance = null
 	let isReady = false
 
+	let toDate = theDate => {
+		if(theDate == null){
+			return ""
+		}
+
+		return new Date(
+			theDate.split(" ")[0].split("-")[0], 
+			theDate.split(" ")[0].split("-")[1], 
+			theDate.split(" ")[0].split("-")[2])
+			.toLocaleDateString(
+				'id', 
+				{dateStyle:'medium'}
+			)
+	}
+
 	let getDetailData = () => {
 		ApiController({
 			method: 'GET',
@@ -71,7 +86,7 @@
 						</div>
 					</div>
 					<div class="flex flex-gap-regular">
-						<a href="/super-admin/kompilasi-perumahan/edit-kompilasi-perumahan" class="no-decor"><button class="btn-fill-warning flex flex-center-vertical flex-gap-small"><img src="/images/icons/Edit_White.svg"> <span>Edit</span></button></a>
+						<a href="/super-admin/kompilasi-perumahan/edit-kompilasi-perumahan/{data.params.slug}" class="no-decor"><button class="btn-fill-warning flex flex-center-vertical flex-gap-small"><img src="/images/icons/Edit_White.svg"> <span>Edit</span></button></a>
 						<a href="/super-admin/nup/detail-nup" class="no-decor"><button class="btn-fill-danger flex flex-center-vertical flex-gap-small"><img src="/images/icons/Trash_White.svg"> <span>Hapus</span></button></a>
 					</div>
 				</div>
@@ -157,11 +172,11 @@
 							<div class="w-100 flex">
 								<div class="flex flex-direction-col w-25">
 									<div class="caption-card-detail">Mulai Pembangunan</div>
-									<div class="content-card-detail">{new Date(informasiUnit.mulai_pembangunan.split(" ")[0].split("-")[0], informasiUnit.mulai_pembangunan.split(" ")[0].split("-")[1], informasiUnit.mulai_pembangunan.split(" ")[0].split("-")[2]).toLocaleDateString('id', {dateStyle:'medium'})}</div>
+									<div class="content-card-detail">{toDate(informasiUnit.mulai_pembangunan)}</div>
 								</div>
 								<div class="flex flex-direction-col w-25">
 									<div class="caption-card-detail">Target Selesai</div>
-									<div class="content-card-detail">{new Date(informasiUnit.target_selesai.split(" ")[0].split("-")[0], informasiUnit.target_selesai.split(" ")[0].split("-")[1], informasiUnit.target_selesai.split(" ")[0].split("-")[2]).toLocaleDateString('id', {dateStyle:'medium'})}</div>
+									<div class="content-card-detail">{toDate(informasiUnit.target_selesai)}</div>
 								</div>
 								<div class="flex flex-direction-col w-25">
 									<div class="caption-card-detail">Sisa Waktu</div>
@@ -169,7 +184,7 @@
 								</div>
 								<div class="flex flex-direction-col w-25">
 									<div class="caption-card-detail">Selesai Pembangunan</div>
-									<div class="content-card-detail">{informasiUnit.selesai_pembangunan}</div>
+									<div class="content-card-detail">{informasiUnit.selesai_pembangunan == 'Belum Selesai' ? informasiUnit.selesai_pembangunan : toDate(informasiUnit.selesai_pembangunan)}</div>
 								</div>
 							</div>
 							<div class="w-100 flex">
@@ -333,13 +348,13 @@
 									<div class="flex w-100">
 										<div class="flex flex-direction-col w-50">
 											<div class="caption-card-detail">Tanggal Mulai Land Clearing</div>
-											<div class="content-card-detail">{new Date(dataKavling.mulai_pembangunan.split(" ")[0].split("-")[0], dataKavling.mulai_pembangunan.split(" ")[0].split("-")[1], dataKavling.mulai_pembangunan.split(" ")[0].split("-")[2]).toLocaleDateString('id', {dateStyle:'medium'})}</div>
+											<div class="content-card-detail">{toDate(dataKavling.mulai_pembangunan)}</div>
 										</div>
 									</div>
 									<div class="flex w-100">
 										<div class="flex flex-direction-col w-50">
 											<div class="caption-card-detail">Target Selesai</div>
-											<div class="content-card-detail">{new Date(dataKavling.target_selesai.split(" ")[0].split("-")[0], dataKavling.target_selesai.split(" ")[0].split("-")[1], dataKavling.target_selesai.split(" ")[0].split("-")[2]).toLocaleDateString('id', {dateStyle:'medium'})}</div>
+											<div class="content-card-detail">{toDate(dataKavling.target_selesai)}</div>
 										</div>
 									</div>
 									<div class="flex w-100">
@@ -525,7 +540,7 @@
 										</div>
 										<div class="flex flex-direction-col w-50">
 											<div class="caption-card-detail">Tanggal Surat</div>
-											<div class="content-card-detail">{new Date(suratSP3UR.tanggal_surat.split(" ")[0].split("-")[0], suratSP3UR.tanggal_surat.split(" ")[0].split("-")[1], suratSP3UR.tanggal_surat.split(" ")[0].split("-")[2]).toLocaleDateString('id', {dateStyle:'medium'})}</div>
+											<div class="content-card-detail">{toDate(suratSP3UR.tanggal_surat)}</div>
 										</div>
 									</div>
 									<div class="flex w-100">
@@ -571,7 +586,7 @@
 										</div>
 										<div class="flex flex-direction-col w-50">
 											<div class="caption-card-detail">Tanggal Surat</div>
-											<div class="content-card-detail">{new Date(suratSP3K.tanggal_surat.split(" ")[0].split("-")[0], suratSP3K.tanggal_surat.split(" ")[0].split("-")[1], suratSP3K.tanggal_surat.split(" ")[0].split("-")[2]).toLocaleDateString('id', {dateStyle:'medium'})}</div>
+											<div class="content-card-detail">{toDate(suratSP3K.tanggal_surat)}</div>
 										</div>
 									</div>
 									<div class="flex w-100">
@@ -581,7 +596,7 @@
 										</div>
 										<div class="flex flex-direction-col w-50">
 											<div class="caption-card-detail">FLPP/BP2BT/SSB</div>
-											<div class="content-card-detail">{suratSP3K.flpp}</div>
+											<div class="content-card-detail">{suratSP3K.flpp_bp2bt_ssb.toUpperCase()}</div>
 										</div>
 									</div>
 								</div>
@@ -615,7 +630,7 @@
 										</div>
 										<div class="flex flex-direction-col w-50">
 											<div class="caption-card-detail">Tanggal Surat</div>
-											<div class="content-card-detail">{new Date(suratSPPH.tanggal_surat.split(" ")[0].split("-")[0], suratSPPH.tanggal_surat.split(" ")[0].split("-")[1], suratSPPH.tanggal_surat.split(" ")[0].split("-")[2]).toLocaleDateString('id', {dateStyle:'medium'})}</div>
+											<div class="content-card-detail">{toDate(suratSPPH.tanggal_surat)}</div>
 										</div>
 									</div>
 								</div>
@@ -647,7 +662,7 @@
 										</div>
 										<div class="flex flex-direction-col w-50">
 											<div class="caption-card-detail">Tanggal Surat</div>
-											<div class="content-card-detail">{new Date(suratSPPKR.tanggal_surat.split(" ")[0].split("-")[0], suratSPPKR.tanggal_surat.split(" ")[0].split("-")[1], suratSPPKR.tanggal_surat.split(" ")[0].split("-")[2]).toLocaleDateString('id', {dateStyle:'medium'})}</div>
+											<div class="content-card-detail">{toDate(suratSPPKR.tanggal_surat)}</div>
 										</div>
 									</div>
 								</div>
@@ -681,7 +696,7 @@
 										</div>
 										<div class="flex flex-direction-col w-40">
 											<div class="caption-card-detail">Tanggal Pembayaran BM</div>
-											<div class="content-card-detail">{new Date(komisiPTDA.tanggal_pembayaran_bm.split(" ")[0].split("-")[0], komisiPTDA.tanggal_pembayaran_bm.split(" ")[0].split("-")[1], komisiPTDA.tanggal_pembayaran_bm.split(" ")[0].split("-")[2]).toLocaleDateString('id', {dateStyle:'medium'})}</div>
+											<div class="content-card-detail">{toDate(komisiPTDA.tanggal_pembayaran_bm)}</div>
 										</div>
 										<div class="flex flex-direction-col w-30">
 											<div class="caption-card-detail">Bukti Pembayaran</div>
@@ -695,7 +710,7 @@
 										</div>
 										<div class="flex flex-direction-col w-40">
 											<div class="caption-card-detail">Tanggal Pembayaran MCLU</div>
-											<div class="content-card-detail">{new Date(komisiPTDA.tanggal_pembayaran_mclu.split(" ")[0].split("-")[0], komisiPTDA.tanggal_pembayaran_mclu.split(" ")[0].split("-")[1], komisiPTDA.tanggal_pembayaran_mclu.split(" ")[0].split("-")[2]).toLocaleDateString('id', {dateStyle:'medium'})}</div>
+											<div class="content-card-detail">{toDate(komisiPTDA.tanggal_pembayaran_mclu)}</div>
 										</div>
 										<div class="flex flex-direction-col w-30">
 											<div class="caption-card-detail">Bukti Pembayaran</div>
@@ -709,7 +724,7 @@
 										</div>
 										<div class="flex flex-direction-col w-40">
 											<div class="caption-card-detail">Tanggal Pembayaran LS</div>
-											<div class="content-card-detail">{new Date(komisiPTDA.tanggal_pembayaran_ls.split(" ")[0].split("-")[0], komisiPTDA.tanggal_pembayaran_ls.split(" ")[0].split("-")[1], komisiPTDA.tanggal_pembayaran_ls.split(" ")[0].split("-")[2]).toLocaleDateString('id', {dateStyle:'medium'})}</div>
+											<div class="content-card-detail">{toDate(komisiPTDA.tanggal_pembayaran_ls)}</div>
 										</div>
 										<div class="flex flex-direction-col w-30">
 											<div class="caption-card-detail">Bukti Pembayaran</div>
@@ -732,39 +747,39 @@
 									<div class="flex w-100">
 										<div class="flex flex-direction-col w-10">
 											<div class="caption-card-detail">Nama Notaris</div>
-											<div class="content-card-detail">Ghina</div>
+											<div class="content-card-detail">{informasiHeadFinance.retensi.notaris.nama}</div>
 										</div>
 										<div class="flex flex-direction-col w-10">
 											<div class="caption-card-detail">Plafond</div>
-											<div class="content-card-detail">Rp. 128.000.000 </div>
+											<div class="content-card-detail">Rp. {informasiHeadFinance.retensi.plafond}</div>
 										</div>
 										<div class="flex flex-direction-col w-10">
 											<div class="caption-card-detail">Besar Plafond</div>
-											<div class="content-card-detail">Rp. 134.900.000 </div>
+											<div class="content-card-detail">Rp. {informasiHeadFinance.retensi.besar_plafond}</div>
 										</div>
 										<div class="flex flex-direction-col w-10">
 											<div class="caption-card-detail">Pencairan</div>
-											<div class="content-card-detail">Rp. 110.300.000 </div>
+											<div class="content-card-detail">Rp. {informasiHeadFinance.retensi.pencairan}</div>
 										</div>
 										<div class="flex flex-direction-col w-10">
 											<div class="caption-card-detail">Retensi</div>
-											<div class="content-card-detail">Rp. 13.200.000  </div>
+											<div class="content-card-detail">Rp. {informasiHeadFinance.retensi.retensi}</div>
 										</div>
 										<div class="flex flex-direction-col w-10">
 											<div class="caption-card-detail">Retensi Cair</div>
-											<div class="content-card-detail">Rp. 13.200.000  </div>
+											<div class="content-card-detail">Rp. {informasiHeadFinance.retensi.retensi_cair}</div>
 										</div>
 										<div class="flex flex-direction-col w-10">
 											<div class="caption-card-detail">Pengajuan</div>
-											<div class="content-card-detail">-</div>
+											<div class="content-card-detail">Rp. {informasiHeadFinance.retensi.pengajuan}</div>
 										</div>
 										<div class="flex flex-direction-col w-10">
 											<div class="caption-card-detail">Sisa Retensi</div>
-											<div class="content-card-detail">-</div>
+											<div class="content-card-detail">Rp. {informasiHeadFinance.retensi.sisa_retensi}</div>
 										</div>
 										<div class="flex flex-direction-col w-10">
 											<div class="caption-card-detail">Rekap</div>
-											<div class="content-card-detail">Rp. 13.200.000</div>
+											<div class="content-card-detail">Rp. {informasiHeadFinance.retensi.rekap}</div>
 										</div>
 										<div class="flex flex-direction-col w-10">
 											<div class="caption-card-detail">Bukti Pencairan</div>
@@ -785,37 +800,37 @@
 										<div class="flex flex-gap-regular w-100">
 											<div class="flex flex-direction-col w-25">
 												<div class="caption-card-detail">PPH</div>
-												<div class="content-card-detail">Rp. 4.900.000 </div>
+												<div class="content-card-detail">Rp. {informasiHeadFinance.notaris.pph}</div>
 											</div>
 											<div class="flex flex-direction-col w-25">
 												<div class="caption-card-detail">Tanggal Bayar</div>
-												<div class="content-card-detail">23 Jun 2022</div>
+												<div class="content-card-detail">{toDate(informasiHeadFinance.notaris.tanggal_pph)}</div>
 											</div>
 											<div class="flex flex-direction-col w-25">
 												<div class="caption-card-detail">BPHTB</div>
-												<div class="content-card-detail">Rp. 4.900.000 </div>
+												<div class="content-card-detail">Rp. {informasiHeadFinance.notaris.bphtb}</div>
 											</div>
 											<div class="flex flex-direction-col w-25">
 												<div class="caption-card-detail">Tanggal Bayar</div>
-												<div class="content-card-detail">23 Jun 2022 </div>
+												<div class="content-card-detail">{toDate(informasiHeadFinance.notaris.tanggal_bphtb)}</div>
 											</div>
 										</div>
 										<div class="flex flex-gap-regular w-100">
 											<div class="flex flex-direction-col w-25">
 												<div class="caption-card-detail">ROYA</div>
-												<div class="content-card-detail">Rp. 4.900.000 </div>
+												<div class="content-card-detail">Rp. {informasiHeadFinance.notaris.roya}</div>
 											</div>
 											<div class="flex flex-direction-col w-25">
 												<div class="caption-card-detail">Tanggal Bayar</div>
-												<div class="content-card-detail">23 Jun 2022</div>
+												<div class="content-card-detail">{toDate(informasiHeadFinance.notaris.tanggal_roya)}</div>
 											</div>
 											<div class="flex flex-direction-col w-25">
 												<div class="caption-card-detail">Biaya Notaris</div>
-												<div class="content-card-detail">Rp. 4.900.000 </div>
+												<div class="content-card-detail">Rp. {informasiHeadFinance.notaris.biaya_notaris}</div>
 											</div>
 											<div class="flex flex-direction-col w-25">
 												<div class="caption-card-detail">Tanggal Bayar</div>
-												<div class="content-card-detail">23 Jun 2022 </div>
+												<div class="content-card-detail">{toDate(informasiHeadFinance.notaris.tanggal_biaya_notaris)}</div>
 											</div>
 										</div>
 									</div>
@@ -830,21 +845,21 @@
 										<div class="flex flex-gap-regular w-100">
 											<div class="flex flex-direction-col w-31">
 												<div class="caption-card-detail">Nilai</div>
-												<div class="content-card-detail">Rp. 134.900.000 </div>
+												<div class="content-card-detail">Rp. {informasiHeadFinance.ppjb.nilai}</div>
 											</div>
 											<div class="flex flex-direction-col w-31">
 												<div class="caption-card-detail">Diajukan</div>
-												<div class="content-card-detail">Rp. 134.900.000</div>
+												<div class="content-card-detail">Rp. {informasiHeadFinance.ppjb.diajukan}</div>
 											</div>
 											<div class="flex flex-direction-col w-31">
 												<div class="caption-card-detail">Tanggal Cair</div>
-												<div class="content-card-detail">23 Jun 2022 </div>
+												<div class="content-card-detail">{toDate(informasiHeadFinance.ppjb.tanggal_cair)}</div>
 											</div>
 										</div>
 										<div class="flex flex-gap-regular w-100">
 											<div class="flex flex-direction-col w-31">
 												<div class="caption-card-detail">Outstanding</div>
-												<div class="content-card-detail">Rp. 134.900.000 </div>
+												<div class="content-card-detail">Rp. {informasiHeadFinance.ppjb.outstanding}</div>
 											</div>
 										</div>
 									</div>
@@ -861,21 +876,21 @@
 										<div class="flex flex-gap-regular w-100">
 											<div class="flex flex-direction-col w-50">
 												<div class="caption-card-detail">Selisih Plafond</div>
-												<div class="content-card-detail">Rp. 4.900.000 </div>
+												<div class="content-card-detail">Rp. {informasiHeadFinance.spph.selisih_plafond}</div>
 											</div>
 											<div class="flex flex-direction-col w-50">
 												<div class="caption-card-detail">Tanggal Bayar</div>
-												<div class="content-card-detail">23 Jun 2022</div>
+												<div class="content-card-detail">{toDate(informasiHeadFinance.spph.tanggal_plafond)}</div>
 											</div>
 										</div>
 										<div class="flex flex-gap-regular w-100">
 											<div class="flex flex-direction-col w-50">
 												<div class="caption-card-detail">Selisih Notaris</div>
-												<div class="content-card-detail">Rp. 4.900.000 </div>
+												<div class="content-card-detail">Rp. {informasiHeadFinance.spph.selisih_notaris}</div>
 											</div>
 											<div class="flex flex-direction-col w-50">
 												<div class="caption-card-detail">Tanggal Bayar</div>
-												<div class="content-card-detail">23 Jun 2022</div>
+												<div class="content-card-detail">{toDate(informasiHeadFinance.spph.tanggal_notaris)}</div>
 											</div>
 										</div>
 									</div>
@@ -890,11 +905,11 @@
 										<div class="flex flex-gap-regular w-100">
 											<div class="flex flex-direction-col w-50">
 												<div class="caption-card-detail">Nilai</div>
-												<div class="content-card-detail">Rp. 4.900.000 </div>
+												<div class="content-card-detail">Rp. {informasiHeadFinance.sbum.nilai}</div>
 											</div>
 											<div class="flex flex-direction-col w-50">
 												<div class="caption-card-detail">Tanggal Cair</div>
-												<div class="content-card-detail">23 Jun 2022</div>
+												<div class="content-card-detail">{toDate(informasiHeadFinance.sbum.tanggal_cair)}</div>
 											</div>
 										</div>
 										<div class="flex flex-gap-regular w-100">
@@ -940,17 +955,18 @@
 								</div>
 							</div>
 						</div>
-						<div class="flex w-100 flex-gap-regular">
-							<div class="flex flex-direction-col w-50">
+						<div class="flex w-100 flex-gap-regular" style="flex-wrap: wrap;">
+							{#each informasiHeadFinance.retensi_data as r}
+							<div class="flex flex-direction-col" style="flex: 40%;">
 								<div class="card-secondary flex flex-direction-col flex-gap-semi-small">
 									<div class="w-100 flex flex-direction-col flex-gap-regular">
 										<div class="flex flex-center-vertical flex-between-horizontal">
-											<div class="title-secondary-card">Sertifikat</div>
+											<div class="title-secondary-card">{r.jenis_data[0].toUpperCase() + r.jenis_data.slice(1, r.jenis_data.length).toLowerCase()}</div>
 										</div>
 										<div class="flex flex-gap-regular w-100">
 											<div class="flex flex-direction-col w-25">
 												<div class="caption-card-detail">All Nilai</div>
-												<div class="content-card-detail">Rp. 4.900.000 </div>
+												<div class="content-card-detail">Rp. {r.nilai}</div>
 											</div>
 											<div class="flex flex-direction-col w-25">
 												<div class="caption-card-detail">Pengajuan</div>
@@ -958,11 +974,11 @@
 											</div>
 											<div class="flex flex-direction-col w-25">
 												<div class="caption-card-detail">Tanggal Cair</div>
-												<div class="content-card-detail">02 Mar 2020 </div>
+												<div class="content-card-detail">{toDate(r.tanggal_cair)}</div>
 											</div>
 										</div>
 										<div class="flex w-100 flex-gap-regular">
-											<div class="card-secondary flex flex-direction-col flex-gap-semi-small">
+											<div class="card-secondary flex flex-direction-col flex-gap-semi-small w-50">
 												<div class="w-100 flex flex-direction-col flex-gap-regular">
 													<div class="flex flex-center-vertical flex-between-horizontal">
 														<div class="title-secondary-card">Cair</div>
@@ -979,7 +995,7 @@
 													</div>
 												</div>
 											</div>
-											<div class="card-secondary flex flex-direction-col flex-gap-semi-small">
+											<div class="card-secondary flex flex-direction-col flex-gap-semi-small w-50">
 												<div class="w-100 flex flex-direction-col flex-gap-regular">
 													<div class="flex flex-center-vertical flex-between-horizontal">
 														<div class="title-secondary-card">Outstanding</div>
@@ -1000,67 +1016,9 @@
 									</div>
 								</div>
 							</div>
-							<div class="flex flex-direction-col w-50">
-								<div class="card-secondary flex flex-direction-col flex-gap-semi-small">
-									<div class="w-100 flex flex-direction-col flex-gap-regular">
-										<div class="flex flex-center-vertical flex-between-horizontal">
-											<div class="title-secondary-card">IMB</div>
-										</div>
-										<div class="flex flex-gap-regular w-100">
-											<div class="flex flex-direction-col w-25">
-												<div class="caption-card-detail">All Nilai</div>
-												<div class="content-card-detail">Rp. 4.900.000 </div>
-											</div>
-											<div class="flex flex-direction-col w-25">
-												<div class="caption-card-detail">Pengajuan</div>
-												<div class="content-card-detail">Rp. 4.900.000</div>
-											</div>
-											<div class="flex flex-direction-col w-25">
-												<div class="caption-card-detail">Tanggal Cair</div>
-												<div class="content-card-detail">02 Mar 2020 </div>
-											</div>
-										</div>
-										<div class="flex w-100 flex-gap-regular">
-											<div class="card-secondary flex flex-direction-col flex-gap-semi-small">
-												<div class="w-100 flex flex-direction-col flex-gap-regular">
-													<div class="flex flex-center-vertical flex-between-horizontal">
-														<div class="title-secondary-card">Cair</div>
-													</div>
-													<div class="flex flex-gap-regular w-100">
-														<div class="flex flex-direction-col w-50">
-															<div class="caption-card-detail">Nominal Cair</div>
-															<div class="content-card-detail">Rp. 4.900.000 </div>
-														</div>
-														<div class="flex flex-direction-col w-50">
-															<div class="caption-card-detail">Cair dari Bank</div>
-															<div class="content-card-detail">BANTIM</div>
-														</div>
-													</div>
-												</div>
-											</div>
-											<div class="card-secondary flex flex-direction-col flex-gap-semi-small">
-												<div class="w-100 flex flex-direction-col flex-gap-regular">
-													<div class="flex flex-center-vertical flex-between-horizontal">
-														<div class="title-secondary-card">Outstanding</div>
-													</div>
-													<div class="flex flex-gap-regular w-100">
-														<div class="flex flex-direction-col w-50">
-															<div class="caption-card-detail">Nominal Sisa</div>
-															<div class="content-card-detail">Rp. 4.900.000 </div>
-														</div>
-														<div class="flex flex-direction-col w-50">
-															<div class="caption-card-detail">Cair dari Bank</div>
-															<div class="content-card-detail">BANTIM</div>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
+							{/each}
 						</div>
-						<div class="flex w-100 flex-gap-regular">
+						<!-- <div class="flex w-100 flex-gap-regular">
 							<div class="flex flex-direction-col w-50">
 								<div class="card-secondary flex flex-direction-col flex-gap-semi-small">
 									<div class="w-100 flex flex-direction-col flex-gap-regular">
@@ -1082,7 +1040,7 @@
 											</div>
 										</div>
 										<div class="flex w-100 flex-gap-regular">
-											<div class="card-secondary flex flex-direction-col flex-gap-semi-small">
+											<div class="card-secondary flex flex-direction-col flex-gap-semi-small w-50">
 												<div class="w-100 flex flex-direction-col flex-gap-regular">
 													<div class="flex flex-center-vertical flex-between-horizontal">
 														<div class="title-secondary-card">Cair</div>
@@ -1099,7 +1057,7 @@
 													</div>
 												</div>
 											</div>
-											<div class="card-secondary flex flex-direction-col flex-gap-semi-small">
+											<div class="card-secondary flex flex-direction-col flex-gap-semi-small w-50">
 												<div class="w-100 flex flex-direction-col flex-gap-regular">
 													<div class="flex flex-center-vertical flex-between-horizontal">
 														<div class="title-secondary-card">Outstanding</div>
@@ -1141,7 +1099,7 @@
 											</div>
 										</div>
 										<div class="flex w-100 flex-gap-regular">
-											<div class="card-secondary flex flex-direction-col flex-gap-semi-small">
+											<div class="card-secondary flex flex-direction-col flex-gap-semi-small w-50">
 												<div class="w-100 flex flex-direction-col flex-gap-regular">
 													<div class="flex flex-center-vertical flex-between-horizontal">
 														<div class="title-secondary-card">Cair</div>
@@ -1158,7 +1116,7 @@
 													</div>
 												</div>
 											</div>
-											<div class="card-secondary flex flex-direction-col flex-gap-semi-small">
+											<div class="card-secondary flex flex-direction-col flex-gap-semi-small w-50">
 												<div class="w-100 flex flex-direction-col flex-gap-regular">
 													<div class="flex flex-center-vertical flex-between-horizontal">
 														<div class="title-secondary-card">Outstanding</div>
@@ -1179,7 +1137,7 @@
 									</div>
 								</div>
 							</div>
-						</div>
+						</div> -->
 					</div>
 				</div>
 				<div class="flex w-100 flex-gap-large">
