@@ -16,26 +16,6 @@
 		}).then(response => {
 			nups = response.data.data
 			nupList = nups
-			for (let i = 0; i < 5; i++) {
-				let temp = {
-					"id_nup": i+2,
-					"nup": "-",
-					"marketing": `Bernio ${i + 2}`,
-					"lead_marketing": `Alex ${i + 2}`,
-					"perumahan": i % 2 == 1 ? "PEK" : "GPC",
-					"client": {
-						"nama_client" : `Doremi ${i + 2}`,
-						"pekerjaan" : 'Astronot'
-					},
-					"booking_fee": "1000000",
-					"tanggal_pembayaran": "25-05-2023",
-					"status_ho": "pending",
-					"status_finance": "pending",
-					"keterangan": "Berkas Tidak Lengkap",
-					"tanggal_submit": `25-${i != 4 ? `0${i+6}` : i + 6}-2023`
-				}
-				nups.push(temp)
-			}
 		})
 	}
 
