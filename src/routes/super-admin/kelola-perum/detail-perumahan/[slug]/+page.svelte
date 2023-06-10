@@ -231,7 +231,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
+								<div class="flex flex-gap-small flex-center-vertical w-60 no-border-table">
 									<div class="text-approve">{unit.progress_pembangunan}</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
@@ -240,7 +240,7 @@
 								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
 									<div class="text-approve">{unit.progress_legal}</div>
 								</div>
-								<div class="flex flex-gap-small flex-center-vertical w-60 no-border-table">
+								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
 									<div class="text-drop-card">SPPKR</div>
 								</div>
 								<div class="flex flex-gap-small flex-center-vertical w-40 no-border-table">
