@@ -37,6 +37,7 @@
 				datas: formData
 			}).then(response => {
 				console.log(response)
+				alert('Perumahan Berhasil Ditambahkan!')
 			})
 		}
 		postPerumahan()
