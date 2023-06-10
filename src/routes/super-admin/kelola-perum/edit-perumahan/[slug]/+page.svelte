@@ -79,9 +79,6 @@
 					</div>
 					<div class="card w-60">
 						<div class="flex flex-direction-col flex-gap-semi-large">
-							<div class="flex flex-center-vertical">
-								<div class="title-card-tambah-nup">Informasi Bank</div>
-							</div>
 							<div class="flex flex-gap-regular">
 								<div class="flex flex-direction-col flex-gap-small w-60">
 									<div class="title-input-nup">Nama Perumahan</div>
